@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>왈가왈부 - WalGaWalBu</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=Gamja+Flower&family=Jua&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- ===== Global Header ===== -->
+    <div class="global-header">
+        <button class="header-btn help-btn" onclick="showHelp()">
+            <i data-lucide="help-circle"></i>
+        </button>
+        <button class="header-btn theme-toggle" onclick="toggleTheme()">
+            <i data-lucide="sun" class="theme-icon light"></i>
+            <i data-lucide="moon" class="theme-icon dark"></i>
+        </button>
+    </div>
+
+    <!-- ===== Main Screen (Home) ===== -->
+    <section id="main-screen" class="screen active">
+        <div class="container">
+            <!-- Hero Section -->
+            <div class="hero">
+                <div class="hero-logo">
+                    <img src="assets/logo_light.svg" alt="왈가왈부 로고" class="logo-image">
+                </div>
+                <h1 class="hero-title">
+                    <span class="c1">왈</span><span class="c2">가</span><span class="c3">왈</span><span class="c4">부</span>
+                </h1>
+                <p class="hero-subtitle">세상 모든 주제에 딴지 거는 AI들, 그리고 나</p>
+            </div>
+
+            <!-- Start Button - More Prominent -->
+            <button class="start-btn-prominent" onclick="navigateTo('setup-screen')">
+                <div class="start-btn-icon">
+                    <i data-lucide="message-circle-plus"></i>
+                </div>
+                <span class="start-btn-text">새 토론 시작하기</span>
+                <i data-lucide="chevron-right" class="start-btn-arrow"></i>
+            </button>
+
+            <!-- Usage Counter -->
+            <button class="usage-info" onclick="showUsageInfo()">
+                <i data-lucide="zap" class="usage-icon"></i>
+                <span>오늘 남은 횟수</span>
+                <div class="usage-badge">
+                    <span id="usage-count">3</span>/3
+                </div>
+                <i data-lucide="info" class="info-icon"></i>
+            </button>
+
+            <!-- History Section -->
+            <div class="section">
+                <div class="section-header">
+                    <h2><i data-lucide="clock" class="section-icon"></i> 최근 토론</h2>
+                </div>
+                <div id="history-list" class="history-list">
+                    <!-- History items will be populated by JavaScript -->
+                </div>
+                <div class="empty-state" id="empty-history">
+                    <i data-lucide="inbox" class="empty-icon"></i>
+                    <p>아직 토론 기록이 없습니다</p>
+                    <span class="empty-hint">새 토론을 시작해보세요</span>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <footer class="app-footer">
+                <div class="footer-buttons">
+                    <button class="footer-btn" onclick="alert('설정 (준비중)')">
+                        <i data-lucide="settings"></i>
+                    </button>
+                    <button class="footer-btn" onclick="showHelp()">
+                        <i data-lucide="help-circle"></i>
+                    </button>
+                    <button class="footer-btn" onclick="alert('피드백 (준비중)')">
+                        <i data-lucide="message-square"></i>
+                    </button>
+                </div>
+                <div class="footer-legal">
+                    <p class="disclaimer">이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다. AI 패널들의 의견이 여러분의 생각에 영감을 줄 수는 있지만, 정보의
+                        정확성에 대한 최종적인 확인은 사용자 본인의 몫입니다. 돌다리도 두드려 보듯, 팩트를 한 번 더 확인하고 활용해 주세요.</p>
+                    <p class="copyright">© 2025 왈가왈부(WalGaWalBu) · v0.1.0-beta</p>
+                </div>
+            </footer>
+        </div>
+    </section>
+
+    <!-- ===== Setup Screen ===== -->
+    <section id="setup-screen" class="screen">
+        <div class="container">
+            <!-- Header -->
+            <div class="screen-header">
+                <button class="back-btn" onclick="navigateTo('main-screen')">
+                    <i data-lucide="arrow-left"></i>
+                </button>
+                <h2 class="page-title">토론 주제 정하기</h2>
+                <div class="header-spacer"></div>
+            </div>
+
+            <!-- Topic Input -->
+            <div class="form-group">
+                <label for="topic-input">
+                    <i data-lucide="edit-3" class="label-icon"></i>
+                    토론 주제
+                </label>
+                <div class="input-wrapper">
+                    <textarea id="topic-input" class="text-input" maxlength="200" placeholder="토론하고 싶은 주제를 입력하세요..."
+                        oninput="updateCounter('topic-input', 'topic-counter', 200)"></textarea>
+                    <div class="input-meta">
+                        <span></span>
+                        <span class="char-count"><span id="topic-counter">0</span>/200</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Context Input -->
+            <div class="form-group">
+                <label for="context-input">
+                    <i data-lucide="file-text" class="label-icon"></i>
+                    배경 설명
+                    <span class="optional-badge">선택</span>
+                </label>
+                <div class="input-wrapper">
+                    <textarea id="context-input" class="text-input" maxlength="500"
+                        placeholder="최신 뉴스나 특정 상황을 AI에게 알려주세요..."
+                        oninput="updateCounter('context-input', 'context-counter', 500)"></textarea>
+                    <div class="input-meta">
+                        <span class="input-hint">
+                            <i data-lucide="info" class="hint-icon"></i>
+                            AI 학습 데이터에 없는 최신 정보 제공
+                        </span>
+                        <span class="char-count"><span id="context-counter">0</span>/500</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Turn Count -->
+            <div class="form-group">
+                <label for="turn-slider">
+                    <i data-lucide="repeat" class="label-icon"></i>
+                    토론 라운드
+                </label>
+                <div class="range-wrapper">
+                    <input type="range" id="turn-slider" min="3" max="10" value="5"
+                        oninput="updateTurnDisplay(this.value)">
+                    <div class="range-labels">
+                        <span>짧게</span>
+                        <span class="range-value"><span id="turn-display">5</span>라운드</span>
+                        <span>길게</span>
+                    </div>
+                </div>
+                <p class="form-hint">
+                    <i data-lucide="info" class="hint-icon"></i>
+                    무료: 1일 3회, 최대 5라운드
+                </p>
+            </div>
+
+            <!-- Progression Mode - Horizontal Layout with Larger Buttons -->
+            <div class="form-group">
+                <label>
+                    <i data-lucide="sliders" class="label-icon"></i>
+                    진행 방식
+                </label>
+                <div class="option-cards horizontal large">
+                    <label class="option-card">
+                        <input type="radio" name="progression" value="auto" id="progression-auto">
+                        <div class="option-content tall">
+                            <i data-lucide="play-circle" class="option-icon-large"></i>
+                            <span class="option-title">자동 진행</span>
+                            <span class="option-desc">AI가 자동으로 토론 진행</span>
+                        </div>
+                    </label>
+                    <label class="option-card">
+                        <input type="radio" name="progression" value="manual" id="progression-manual" checked>
+                        <div class="option-content tall">
+                            <i data-lucide="hand" class="option-icon-large"></i>
+                            <span class="option-title">턴별 진행</span>
+                            <span class="option-desc">내가 개입하며 진행</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Next Button -->
+            <button class="primary-btn" onclick="saveSetupAndNext()">
+                토론자 고르기
+                <i data-lucide="arrow-right" class="btn-icon"></i>
+            </button>
+
+            <!-- Footer -->
+            <footer class="app-footer compact">
+                <div class="footer-legal">
+                    <p class="disclaimer">이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다. AI 패널들의 의견이 여러분의 생각에 영감을 줄 수는 있지만, 정보의
+                        정확성에 대한 최종적인 확인은 사용자 본인의 몫입니다. 돌다리도 두드려 보듯, 팩트를 한 번 더 확인하고 활용해 주세요.</p>
+                    <p class="copyright">© 2025 왈가왈부 · v0.1.0-beta</p>
+                </div>
+            </footer>
+        </div>
+    </section>
+
+    <!-- ===== Participants Screen ===== -->
+    <section id="participants-screen" class="screen">
+        <div class="container">
+            <!-- Header -->
+            <div class="screen-header">
+                <button class="back-btn" onclick="navigateTo('setup-screen')">
+                    <i data-lucide="arrow-left"></i>
+                </button>
+                <h2 class="page-title">토론자 고르기</h2>
+                <div class="header-spacer"></div>
+            </div>
+
+            <!-- Human Participation Toggle with Name Input -->
+            <div class="human-toggle-card">
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <i data-lucide="user" class="toggle-icon"></i>
+                        <div class="toggle-text">
+                            <span class="toggle-title">나도 토론자로 참가할게요</span>
+                        </div>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="human-participation" onchange="toggleHumanParticipation()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+                <!-- Human Name Input (hidden by default) -->
+                <div class="human-name-input-wrapper hidden" id="human-name-wrapper">
+                    <input type="text" id="human-name-input" class="human-name-input" placeholder="닉네임을 입력하세요"
+                        maxlength="10">
+                </div>
+            </div>
+
+            <!-- Participant Count Control -->
+            <div class="participant-count-control">
+                <span class="count-label">AI 토론자 수</span>
+                <div class="count-buttons">
+                    <button class="count-btn" onclick="changeParticipantCount(-1)">
+                        <i data-lucide="minus"></i>
+                    </button>
+                    <span class="count-value" id="participant-count-display">3</span>
+                    <button class="count-btn" onclick="changeParticipantCount(1)">
+                        <i data-lucide="plus"></i>
+                    </button>
+                </div>
+                <span class="count-hint" id="count-hint-text">최대 4명</span>
+            </div>
+
+            <!-- Participant Slots -->
+            <div id="participant-slots" class="participant-slots">
+                <!-- Slots will be generated by JavaScript -->
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-row">
+                <button class="secondary-btn" onclick="randomizeParticipants()">
+                    <i data-lucide="shuffle"></i>
+                    랜덤 설정
+                </button>
+            </div>
+
+            <!-- Start Button -->
+            <button class="primary-btn" onclick="startDebate()">
+                <i data-lucide="messages-square" class="btn-icon-left"></i>
+                토론 시작
+            </button>
+
+            <!-- Footer -->
+            <footer class="app-footer compact">
+                <div class="footer-legal">
+                    <p class="disclaimer">이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다. AI 패널들의 의견이 여러분의 생각에 영감을 줄 수는 있지만, 정보의
+                        정확성에 대한 최종적인 확인은 사용자 본인의 몫입니다. 돌다리도 두드려 보듯, 팩트를 한 번 더 확인하고 활용해 주세요.</p>
+                    <p class="copyright">© 2025 왈가왈부 · v0.1.0-beta</p>
+                </div>
+            </footer>
+        </div>
+    </section>
+
+    <!-- ===== Arena Screen ===== -->
+    <section id="arena-screen" class="screen">
+        <div class="arena-wrapper">
+            <!-- Fixed Arena Header (Simplified) -->
+            <div class="arena-header-fixed">
+                <div class="arena-header-content">
+                    <div class="arena-info full-width">
+                        <span class="arena-label">토론 주제</span>
+                        <h2 class="arena-topic" id="arena-topic">토론 주제</h2>
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+                <!-- Phase Indicator -->
+                <div class="phase-indicator" id="phase-indicator">
+                    <span class="phase-tag intro active" data-phase="intro">
+                        <i data-lucide="mic" class="phase-icon"></i>
+                        소개
+                    </span>
+                    <span class="phase-divider">→</span>
+                    <span class="phase-tag" data-phase="topic">주제발표</span>
+                    <span class="phase-divider">→</span>
+                    <span class="phase-tag" data-phase="opening">기조발언</span>
+                    <span class="phase-divider">→</span>
+                    <span class="phase-tag debate" data-phase="debate">
+                        본격토론
+                        <span class="debate-turn-inline" id="debate-turn-inline"></span>
+                    </span>
+                    <span class="phase-divider">→</span>
+                    <span class="phase-tag" data-phase="summary">정리</span>
+                </div>
+            </div>
+
+            <!-- Scrollable Messages -->
+            <div class="messages-scroll-area" id="messages-container">
+                <!-- Messages will be added by JavaScript -->
+            </div>
+
+            <!-- Human Input Panel (for human participation) -->
+            <div class="human-input-panel hidden" id="human-input-panel">
+                <div class="human-input-header">
+                    <i data-lucide="edit-3"></i>
+                    <span id="human-input-label">내 기조발언을 입력하세요</span>
+                </div>
+                <div class="human-input-area">
+                    <textarea id="human-input-textarea" placeholder="의견을 입력하세요..." maxlength="500"></textarea>
+                    <button class="human-submit-btn" onclick="submitHumanInput()">
+                        <i data-lucide="send"></i>
+                        발언하기
+                    </button>
+                </div>
+            </div>
+
+            <!-- Moderator Intervention Panel (Turn-by-Turn Mode) -->
+            <div class="moderator-panel hidden" id="moderator-panel">
+                <div class="moderator-panel-header">
+                    <div class="panel-title">
+                        <i data-lucide="message-circle-more"></i>
+                        <span>사회자 개입</span>
+                    </div>
+                    <button class="panel-close-btn" onclick="closeModeratorPanel()">
+                        <i data-lucide="x"></i>
+                    </button>
+                </div>
+                <div class="intervention-options">
+                    <button class="intervention-btn" onclick="sendIntervention('이 논점을 더 깊이 다뤄주세요')">
+                        더 깊이 다뤄주세요
+                    </button>
+                    <button class="intervention-btn" onclick="sendIntervention('다른 관점도 들어보고 싶어요')">
+                        다른 관점도 들어보고 싶어요
+                    </button>
+                    <button class="intervention-btn" onclick="sendIntervention('잠깐, 주제가 빗나갔어요')">
+                        주제가 빗나갔어요
+                    </button>
+                    <button class="intervention-btn" onclick="sendIntervention('찬성 측 의견 더 들어보자')">
+                        찬성 측 의견 더
+                    </button>
+                    <button class="intervention-btn" onclick="sendIntervention('반대 측 의견 더 들어보자')">
+                        반대 측 의견 더
+                    </button>
+                    <button class="intervention-btn" onclick="sendIntervention('구체적인 예시를 들어주세요')">
+                        구체적인 예시를
+                    </button>
+                    <button class="intervention-btn" onclick="sendIntervention('정리하고 다음 주제로 넘어갑시다')">
+                        다음 주제로 넘어가자
+                    </button>
+                    <button class="intervention-btn" onclick="sendIntervention('이 주제는 여기까지 하겠습니다')">
+                        이 주제는 마무리
+                    </button>
+                </div>
+            </div>
+
+            <!-- Fixed Arena Controls -->
+            <div class="arena-controls-fixed">
+                <div class="arena-controls" id="arena-controls">
+                    <button class="control-btn" onclick="toggleModeratorPanel()" id="moderator-btn">
+                        <i data-lucide="message-circle-more"></i>
+                        사회자 개입
+                    </button>
+                    <button class="control-btn" onclick="togglePause()" id="pause-btn">
+                        <i data-lucide="pause" id="pause-icon-svg"></i>
+                    </button>
+                    <button class="control-btn danger" onclick="stopDebate()" id="end-btn">
+                        <i data-lucide="square"></i>
+                        종료
+                    </button>
+                </div>
+
+                <!-- Complete Button (Hidden initially) -->
+                <button class="primary-btn complete-btn hidden" id="complete-btn" onclick="goToResult()">
+                    <i data-lucide="check-circle" class="btn-icon-left"></i>
+                    토론 완료
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===== Result Screen ===== -->
+    <section id="result-screen" class="screen">
+        <div class="container">
+            <!-- Result Header -->
+            <div class="result-header">
+                <div class="result-badge" id="result-badge">
+                    <i data-lucide="trophy" class="trophy-icon"></i>
+                </div>
+                <h1 class="page-title" id="result-title">그래서, 결론이 뭡니까?</h1>
+                <p class="result-subtitle" id="result-subtitle">끌벅적했던 오늘의 난상토론, 사회자가 딱 정리해 드립니다.</p>
+            </div>
+
+            <!-- Summary Card -->
+            <div class="result-card">
+                <div class="card-header">
+                    <i data-lucide="file-text" class="card-icon"></i>
+                    <h3>사회자 요약</h3>
+                </div>
+                <div class="summary-content" id="summary-content">
+                    <!-- Summary will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Key Points Card -->
+            <div class="result-card">
+                <div class="card-header">
+                    <i data-lucide="list-checks" class="card-icon"></i>
+                    <h3>주요 쟁점</h3>
+                </div>
+                <ul class="key-points" id="key-points">
+                    <!-- Key points will be populated by JavaScript -->
+                </ul>
+            </div>
+
+            <!-- Statistics Card with Chart -->
+            <div class="result-card">
+                <div class="card-header">
+                    <i data-lucide="pie-chart" class="card-icon"></i>
+                    <h3>토론 분석</h3>
+                </div>
+
+                <!-- Pie Chart with Stats -->
+                <div class="chart-section-merged">
+                    <canvas id="participation-chart" width="160" height="160"></canvas>
+                    <div class="chart-stats" id="chart-stats">
+                        <!-- Stats will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Sentiment Analysis -->
+                <div class="analysis-section">
+                    <h4>논조 분석</h4>
+                    <div class="sentiment-bar">
+                        <div class="sentiment-positive" id="sentiment-positive" style="width: 60%"></div>
+                        <div class="sentiment-negative" id="sentiment-negative" style="width: 40%"></div>
+                    </div>
+                    <div class="sentiment-labels">
+                        <span class="sentiment-label positive">긍정적 <span id="positive-percent">60%</span></span>
+                        <span class="sentiment-label negative">부정적 <span id="negative-percent">40%</span></span>
+                    </div>
+                </div>
+
+                <!-- Keywords as Hashtags -->
+                <div class="analysis-section">
+                    <h4>주요 키워드</h4>
+                    <div class="hashtag-cloud" id="keyword-cloud">
+                        <!-- Keywords will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="action-row">
+                <button class="secondary-btn" onclick="shareDebate()">
+                    <i data-lucide="share-2"></i>
+                    공유하기
+                </button>
+                <button class="secondary-btn" onclick="downloadDebate()">
+                    <i data-lucide="download"></i>
+                    다운로드
+                </button>
+            </div>
+
+            <div class="action-row">
+                <button class="secondary-btn" onclick="restartDebate()">
+                    <i data-lucide="refresh-cw"></i>
+                    재토론
+                </button>
+                <button class="secondary-btn" onclick="goHome()">
+                    <i data-lucide="home"></i>
+                    홈으로
+                </button>
+            </div>
+
+            <!-- Feedback -->
+            <div class="feedback-section">
+                <p>이 토론은 어떠셨나요?</p>
+                <button class="text-btn" onclick="openFeedback()">
+                    <i data-lucide="message-square"></i>
+                    피드백 보내기
+                </button>
+            </div>
+
+            <!-- Footer -->
+            <footer class="app-footer compact">
+                <div class="footer-legal">
+                    <p class="disclaimer">이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다. AI 패널들의 의견이 여러분의 생각에 영감을 줄 수는 있지만, 정보의
+                        정확성에 대한 최종적인 확인은 사용자 본인의 몫입니다. 돌다리도 두드려 보듯, 팩트를 한 번 더 확인하고 활용해 주세요.</p>
+                    <p class="copyright">© 2025 왈가왈부 · v0.1.0-beta</p>
+                </div>
+            </footer>
+        </div>
+    </section>
+
+    <!-- ===== Usage Info Modal ===== -->
+    <div class="modal-overlay hidden" id="usage-modal" onclick="closeModal('usage-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i data-lucide="zap"></i> 오늘의 토론 횟수</h3>
+                <button class="modal-close" onclick="closeModal('usage-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>무료 이용 안내</strong></p>
+                <ul>
+                    <li>하루 최대 <strong>3회</strong>까지 무료 토론 가능</li>
+                    <li>한 번에 최대 <strong>5라운드</strong>까지 진행</li>
+                    <li>매일 <strong>자정(00:00)</strong>에 횟수 리셋</li>
+                </ul>
+                <p class="modal-note">더 많은 토론이 필요하시면 프리미엄 구독을 고려해 주세요! (준비중)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Help Modal ===== -->
+    <div class="modal-overlay hidden" id="help-modal" onclick="closeModal('help-modal')">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3><i data-lucide="help-circle"></i> 사용법</h3>
+                <button class="modal-close" onclick="closeModal('help-modal')">
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>1. 토론 주제 정하기</h4>
+                <p>토론하고 싶은 주제를 입력하세요. 배경 설명을 추가하면 AI가 더 정확한 맥락을 파악합니다.</p>
+
+                <h4>2. 토론자 고르기</h4>
+                <p>AI 패널들의 직업, 나이, 성향을 설정하세요. 직접 참여하려면 "나도 토론자로 참가할게요"를 활성화하세요.</p>
+
+                <h4>3. 토론 진행</h4>
+                <p>턴별 진행 모드에서는 사회자로서 토론에 개입할 수 있습니다.</p>
+
+                <h4>4. 결과 확인</h4>
+                <p>토론이 끝나면 AI 사회자가 요약을 제공합니다. 공유하거나 다운로드할 수 있어요.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize Lucide icons after DOM is ready
+        document.addEventListener('DOMContentLoaded', () => {
+            lucide.createIcons();
+        });
+    </script>
+</body>
+
+</html>

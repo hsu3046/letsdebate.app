@@ -1,0 +1,24 @@
+{
+    "name": "왈가왈부",
+    "short_name": "왈가왈부",
+    "description": "세상 모든 주제에 딴지 거는 AI들, 그리고 나",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#0f0f14",
+    "theme_color": "#3FEEAE",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ]
+}

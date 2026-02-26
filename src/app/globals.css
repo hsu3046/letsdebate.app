@@ -1,0 +1,294 @@
+@import "tailwindcss";
+
+
+/* ===== CSS Custom Properties ===== */
+:root {
+  /* Light Mode (Default) - Design System v1.0 */
+  --bg-primary: #fafafa;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f3f4f6;
+
+  --glass-bg: rgba(255, 255, 255, 0.92);
+  --glass-border: rgba(0, 0, 0, 0.05);
+
+  /* Text Colors - Updated */
+  --text-primary: #191F28;
+  --text-secondary: #4b5563;
+  --text-tertiary: #9ca3af;
+
+  /* Green Accent System */
+  --accent: #40EEAE;
+  --accent-light: #A7F3D0;
+  --accent-dark: #10B981;
+  --accent-darker: #059669;
+  --accent-bg: rgba(64, 238, 174, 0.1);
+
+  /* Gold/Yellow - MVP & Highlight */
+  --gold: #FAD61F;
+  --gold-warm: #F5B016;
+  --gold-bg: rgba(250, 214, 31, 0.08);
+  --gold-border: rgba(245, 176, 22, 0.3);
+
+  /* Status Colors */
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #E65751;
+  --info: #48ACD9;
+
+  /* Logo Colors */
+  --logo-yellow: #FAD61F;
+  --logo-orange: #F5B016;
+  --logo-red: #E65751;
+  --logo-blue: #48ACD9;
+  --logo-green: #40EEAE;
+
+  /* Panelist Colors - Vibrant Palette */
+  --panelist-1: #6366f1;
+  --panelist-2: #ec4899;
+  --panelist-3: #40EEAE;
+  --panelist-4: #f59e0b;
+  --panelist-5: #8b5cf6;
+  --panelist-6: #06b6d4;
+  --human-color: #40EEAE;
+}
+
+/* Dark Mode */
+.dark {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-tertiary: #1e1e2a;
+
+  --glass-bg: rgba(18, 18, 26, 0.95);
+  --glass-border: rgba(255, 255, 255, 0.08);
+
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-tertiary: #6b7280;
+
+  --accent-bg: rgba(64, 238, 174, 0.15);
+  --gold-bg: rgba(250, 214, 31, 0.12);
+}
+
+/* ===== Tailwind 4 Theme ===== */
+@theme inline {
+  /* Colors mapped from CSS variables */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+
+  --color-glass-bg: var(--glass-bg);
+  --color-glass-border: var(--glass-border);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-dark: var(--accent-dark);
+  --color-accent-darker: var(--accent-darker);
+  --color-accent-bg: var(--accent-bg);
+
+  --color-gold: var(--gold);
+  --color-gold-warm: var(--gold-warm);
+  --color-gold-bg: var(--gold-bg);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-info: var(--info);
+
+  --color-logo-yellow: var(--logo-yellow);
+  --color-logo-red: var(--logo-red);
+  --color-logo-blue: var(--logo-blue);
+  --color-logo-green: var(--logo-green);
+
+  --color-panelist-1: var(--panelist-1);
+  --color-panelist-2: var(--panelist-2);
+  --color-panelist-3: var(--panelist-3);
+  --color-panelist-4: var(--panelist-4);
+  --color-panelist-5: var(--panelist-5);
+  --color-panelist-6: var(--panelist-6);
+  --color-human: var(--human-color);
+
+  /* Border Radius */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-3xl: 24px;
+}
+
+/* ===== Base Styles ===== */
+html,
+body {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  font-family: 'Pretendard', var(--font-noto-sans-kr), 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 400;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+/* ===== Utility Classes ===== */
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.glass-shadow {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+}
+
+.glass-shadow-hover:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Hidden utility */
+.hidden {
+  display: none !important;
+}
+
+/* Font families - using CSS variables from Next.js fonts */
+.font-title {
+  font-family: var(--font-do-hyeon), 'Do Hyeon', sans-serif;
+}
+
+.font-display {
+  font-family: var(--font-jua), 'Jua', cursive;
+}
+
+.font-debate {
+  font-family: var(--font-gowun-dodum), 'Gowun Dodum', sans-serif;
+}
+
+/* New Design System Fonts */
+.font-ui {
+  font-family: 'Pretendard', var(--font-noto-sans-kr), 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-quote {
+  font-family: 'RIDIBatang', 'Noto Serif KR', 'Batang', serif;
+  line-height: 1.7;
+}
+
+/* Scrollbar hide utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Animation */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Blob Background Animations */
+@keyframes blob-rotate-1 {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes blob-rotate-2 {
+  0% {
+    transform: rotate(0deg) scale(1.05);
+  }
+
+  50% {
+    transform: rotate(-180deg) scale(0.95);
+  }
+
+  100% {
+    transform: rotate(-360deg) scale(1.05);
+  }
+}
+
+@keyframes blob-rotate-3 {
+  0% {
+    transform: rotate(0deg) translateY(0);
+  }
+
+  33% {
+    transform: rotate(120deg) translateY(-20px);
+  }
+
+  66% {
+    transform: rotate(240deg) translateY(20px);
+  }
+
+  100% {
+    transform: rotate(360deg) translateY(0);
+  }
+}
+
+@keyframes blob-rotate-4 {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+
+  25% {
+    transform: rotate(-90deg) scale(1.15);
+  }
+
+  50% {
+    transform: rotate(-180deg) scale(1);
+  }
+
+  75% {
+    transform: rotate(-270deg) scale(0.9);
+  }
+
+  100% {
+    transform: rotate(-360deg) scale(1);
+  }
+}
+
+.animate-blob-1 {
+  animation: blob-rotate-1 8s infinite ease-in-out;
+}
+
+.animate-blob-2 {
+  animation: blob-rotate-2 10s infinite ease-in-out;
+}
+
+.animate-blob-3 {
+  animation: blob-rotate-3 7s infinite ease-in-out;
+}
+
+.animate-blob-4 {
+  animation: blob-rotate-4 12s infinite ease-in-out;
+}
