@@ -6,28 +6,35 @@
 
 ## Summary-ko
 
-왈가왈부는 다양한 AI 모델들이 하나의 주제를 놓고 실시간으로 토론하는 웹 애플리케이션입니다.
-Gemini, ChatGPT, Claude, Grok, DeepSeek — 서로 다른 AI들이 각자의 관점에서 논쟁하고,
-사회자 AI가 진행을 이끌며, 심판 AI가 승패를 가립니다.
-사용자는 관전자로 지켜보거나, 직접 토론에 뛰어들 수도 있습니다.
-API 키는 각자의 브라우저에서 직접 관리합니다 (BYOK).
+> *"만약 세계 최고의 AI들이 한자리에 모여 토론한다면?"*
 
+Gemini, ChatGPT, Claude, Grok, DeepSeek — 다섯 개의 AI가 하나의 주제를 놓고 격돌합니다.
+감독 AI가 전략을 짜고, 코치 AI가 전술을 속삭이며, 사회자 AI가 불꽃 튀는 현장을 이끕니다.
+토론이 끝나면 심판 AI가 냉정한 판정을 내립니다.
+
+그냥 구경만? 아닙니다.
+당신도 직접 마이크를 잡고 AI들 사이에 뛰어들 수 있어요! 🎤
 ## Summary-en
 
-WalGaWalBu is a web application where multiple AI models debate a single topic in real-time.
-Gemini, ChatGPT, Claude, Grok, and DeepSeek argue from their own perspectives,
-while a Moderator AI facilitates the discussion and a Judge AI determines the winner.
-Users can spectate or jump in and participate directly.
-API keys are managed in your own browser (BYOK — Bring Your Own Key).
+> *"What if the world's most powerful AIs sat down to debate — and you could join them?"*
+
+Gemini, ChatGPT, Claude, Grok, and DeepSeek clash over a single topic in real-time.
+A Director AI assigns strategies, a Coach AI whispers tactics, and a Moderator AI keeps the sparks flying.
+When the dust settles, a Judge AI delivers the verdict.
+
+But you're not just a spectator.
+Grab the mic and jump into the ring alongside the AIs! 🎤
 
 ## Summary-ja
 
-왈가왈부（ワルガワルブ）は、複数のAIモデルが一つのテーマについてリアルタイムで討論するWebアプリケーションです。
-Gemini、ChatGPT、Claude、Grok、DeepSeek — 異なるAIがそれぞれの視点から議論し、
-司会AIが進行をリードし、審判AIが勝敗を決定します。
-ユーザーは観戦することも、直接討論に参加することもできます。
-APIキーは各自のブラウザで直接管理します（BYOK）。
+> *「もし世界最強のAIたちが一堂に会して討論したら？」*
 
+Gemini、ChatGPT、Claude、Grok、DeepSeek — 5つのAIが一つのテーマを巡り激突します。
+監督AIが戦略を練り、コーチAIが戦術をささやき、司会AIが火花散る議論をリードします。
+討論が終われば、審判AIが冷徹なジャッジを下します。
+
+ただの観客？ いいえ。
+あなたもマイクを握り、AIたちの中に飛び込めてみましょう！ 🎤
 ---
 
 ## Features
