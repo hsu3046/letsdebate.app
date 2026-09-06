@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -9,8 +9,9 @@ import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight, Check, User, HelpCirc
 import { useDebateStore } from '@/store/debateStore';
 import { CHARACTERS } from '@/lib/characters';
 import FadeInView from '@/components/FadeInView';
+import FlowSteps from '@/components/FlowSteps';
+import { useHydrated } from '@/hooks/useHydrated';
 import { consumeServerUsage, DAILY_LIMIT } from '@/lib/usageLimit';
-import { useApiKeyStore } from '@/store/apiKeyStore';
 
 // MBTI 배지 색상
 const MBTI_COLORS: Record<string, string> = {
@@ -27,8 +28,10 @@ const getShortName = (fullName: string) => fullName.split(' ')[0];
 const HIDDEN_CHARACTERS = ['chloe', 'greg', 'jenny'];
 const AVAILABLE_CHARACTERS = CHARACTERS.filter(c => !HIDDEN_CHARACTERS.includes(c.id));
 
-export default function ParticipantsPage() {
+function ParticipantsContent() {
     const router = useRouter();
+    const startingRef = useRef(false);
+    const [isStarting, setIsStarting] = useState(false);
     const { setup, setSetup } = useDebateStore();
 
     // 토론 종류에 따른 설정
@@ -81,18 +84,12 @@ export default function ParticipantsPage() {
     };
 
     const handleStart = async () => {
+        if (startingRef.current) return;
+        startingRef.current = true;
+        setIsStarting(true);
+        try {
         if (selectedCharacters.length < minAI) {
-            alert(humanParticipation ? '최소 1명의 AI 토론자를 선택해주세요!' : '최소 2명의 토론자를 선택해주세요!');
-            return;
-        }
-
-        // BYOK: API 키 검증
-        const hasMinimumKey = useApiKeyStore.getState().hasMinimumKey();
-        if (!hasMinimumKey) {
-            const goToSettings = confirm('API 키가 설정되지 않았습니다.\n설정 페이지에서 최소 Google AI 키를 입력해주세요.\n\n설정 페이지로 이동할까요?');
-            if (goToSettings) {
-                router.push('/settings');
-            }
+            alert(humanParticipation ? 'AI 토론자를 1명 이상 선택해 주세요' : '토론자를 2명 이상 선택해 주세요');
             return;
         }
 
@@ -123,10 +120,16 @@ export default function ParticipantsPage() {
         setSetup({
             participants,
             humanParticipation,
-            humanName: humanParticipation ? humanName : undefined,
+            humanName: humanParticipation ? (humanName.trim() || '나') : '',
         });
 
         router.push('/arena');
+        } catch {
+            alert('토론을 시작하지 못했어요. 연결을 확인하고 다시 시도해 주세요.');
+        } finally {
+            startingRef.current = false;
+            setIsStarting(false);
+        }
     };
 
     const handleRandomSelect = () => {
@@ -197,8 +200,9 @@ export default function ParticipantsPage() {
     }, []);
     return (
         <>
-            <section className="min-h-screen p-4 pt-6">
-                <div className="max-w-[420px] mx-auto pb-6">
+            <section className="legacy-page">
+                <div className="max-w-[760px] mx-auto pb-6">
+                    <FlowSteps current={2} />
                     {/* Header */}
                     <FadeInView delay={0.1}>
                         <div className="flex items-center mb-6">
@@ -323,7 +327,7 @@ export default function ParticipantsPage() {
                                         {/* Tap hint */}
                                         <p className="text-xs text-center text-text-tertiary mt-4 opacity-60">
                                             {isRoundtable
-                                                ? '라운드테이블은 5명 전원 참가'
+                                                ? '라운드테이블에는 5명이 모두 참여해요'
                                                 : `탭하여 ${isSelected ? '선택 해제' : '선택'}`}
                                         </p>
                                     </motion.div>
@@ -348,7 +352,7 @@ export default function ParticipantsPage() {
                         <div className="mb-6">
                             <div className="flex items-center justify-between mb-3">
                                 <h3 className="text-sm font-semibold text-text-secondary">
-                                    선택된 토론자 ({selectedCharacters.length}/{maxAI})
+                                    선택한 토론자 ({selectedCharacters.length}/{maxAI})
                                     {isRoundtable && <span className="ml-2 text-xs font-normal" style={{ color: '#059669' }}>(고정)</span>}
                                 </h3>
                                 {!isRoundtable && (
@@ -365,10 +369,10 @@ export default function ParticipantsPage() {
                                     </motion.button>
                                 )}
                             </div>
-                            {/* 선택된 토론자 - 3개/줄 그리드 레이아웃 */}
+                            {/* 선택한 토론자 - 3개/줄 그리드 레이아웃 */}
                             <div className="grid grid-cols-3 gap-1.5 min-h-[60px]">
                                 {selectedCharacters.length === 0 ? (
-                                    <p className="col-span-3 text-sm text-text-tertiary">캐릭터를 선택해주세요 (최소 {minAI}명)</p>
+                                    <p className="col-span-3 text-sm text-text-tertiary">캐릭터를 선택해 주세요 (최소 {minAI}명)</p>
                                 ) : (
                                     selectedCharacters.map((id) => {
                                         const char = CHARACTERS.find((c) => c.id === id)!;
@@ -431,8 +435,8 @@ export default function ParticipantsPage() {
                                     <User size={20} className={humanParticipation ? 'text-white' : 'text-text-tertiary'} />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="font-semibold text-text-primary">나도 참가할게요!</p>
-                                    <p className="text-xs text-text-tertiary">토론에 직접 참여합니다</p>
+                                    <p className="font-semibold text-text-primary">나도 함께 토론하기</p>
+                                    <p className="text-xs text-text-tertiary">AI와 직접 의견을 나눌 수 있어요</p>
                                 </div>
                                 <div className={`w-12 h-7 rounded-full transition-all ${humanParticipation ? 'bg-accent' : 'bg-gray-200'}`}>
                                     <motion.div
@@ -455,7 +459,7 @@ export default function ParticipantsPage() {
                                             value={humanName}
                                             onChange={(e) => setHumanName(e.target.value)}
                                             maxLength={10}
-                                            placeholder="닉네임을 입력하세요 (최대 10자)"
+                                            placeholder="닉네임을 입력해 주세요 (최대 10자)"
                                             className="w-full mt-3 p-3 bg-white border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-accent"
                                         />
                                     </motion.div>
@@ -468,100 +472,27 @@ export default function ParticipantsPage() {
                     <FadeInView delay={0.5}>
                         <motion.button
                             onClick={handleStart}
-                            disabled={selectedCharacters.length < minAI}
+                            disabled={isStarting || selectedCharacters.length < minAI}
                             className={`w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-white shadow-lg transition-all ${selectedCharacters.length >= minAI ? 'bg-accent' : 'bg-gray-300 cursor-not-allowed'}`}
                             whileHover={selectedCharacters.length >= minAI ? { scale: 1.02 } : {}}
                             whileTap={selectedCharacters.length >= minAI ? { scale: 0.97 } : {}}
                             transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                         >
-                            토론 시작
+                            {isStarting ? '토론 준비 중…' : '토론 시작'}
                             <ArrowRight size={18} />
                         </motion.button>
                     </FadeInView>
 
                     {/* Footer - Help & Feedback */}
-                    <FadeInView delay={0.6}>
-                        <footer className="mt-8 pt-5 border-t border-gray-200">
-                            <div className="flex justify-center gap-3 mb-4">
-                                <Link href="/help">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-text-secondary hover:border-accent transition-all"
-                                    >
-                                        <HelpCircle size={16} />
-                                        소개글
-                                    </motion.button>
-                                </Link>
-                                <Link href="/notice">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-text-secondary hover:border-accent transition-all"
-                                    >
-                                        <Bell size={16} />
-                                        알림판
-                                    </motion.button>
-                                </Link>
-                                <Link href="/feedback">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-text-secondary hover:border-accent transition-all"
-                                    >
-                                        <MessageSquare size={16} />
-                                        피드백
-                                    </motion.button>
-                                </Link>
-                                <Link href="/settings">
-                                    <motion.button
-                                        whileHover={{ scale: 1.05 }}
-                                        whileTap={{ scale: 0.95 }}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                        className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-text-secondary hover:border-accent transition-all"
-                                    >
-                                        <Settings size={16} />
-                                        설정
-                                    </motion.button>
-                                </Link>
-                            </div>
 
-
-                            <p className="text-xs text-text-tertiary/80 text-center leading-relaxed mb-3">
-                                이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다.
-                            </p>
-                            <p className="text-[9px] text-text-tertiary/60 text-center leading-relaxed mb-2">
-                                본 서비스는 베타 테스트 중인 AI 시뮬레이션입니다. 생성된 콘텐츠는 사실과 다르거나 편향될 수 있으며,
-                                왈가왈부는 정보의 정확성이나 신뢰성을 보장하지 않습니다. 특히 법률, 의료, 금융 등 전문적인 조언으로
-                                활용하여 발생한 결과에 대해 서비스 제공자는 어떠한 법적 책임도 지지 않습니다.
-                            </p>
-                            <p className="text-[11px] text-text-secondary font-medium text-center mb-2">
-                                <Link href="/legal" className="hover:text-accent transition-colors underline underline-offset-2">이용약관</Link>
-                                {' | '}
-                                <Link href="/legal?tab=privacy" className="hover:text-accent transition-colors underline underline-offset-2">개인정보처리방침</Link>
-                            </p>
-
-                            {/* Powered by */}
-                            <div className="flex items-center justify-center gap-2 mt-[10px] mb-4">
-                                <span className="text-xs text-text-primary">Powered by</span>
-                                <div className="flex items-center gap-3 ml-1">
-                                    <img src="/logos/gemini.svg" alt="Gemini" className="h-6" />
-                                    <img src="/logos/anthropic.svg" alt="Claude" className="h-6" />
-                                    <img src="/logos/openai.svg" alt="OpenAI" className="h-6" />
-                                    <img src="/logos/xai.svg" alt="Grok" className="h-6" />
-                                    <img src="/DeepSeek_logo.svg" alt="DeepSeek" className="h-6" />
-                                </div>
-                            </div>
-                            <p className="text-[0.625rem] text-text-tertiary text-center opacity-70">
-                                © 2025 왈가왈부(WalGaWalBu) · v0.2.0
-                            </p>
-                        </footer>
-                    </FadeInView>
                 </div>
             </section>
         </>
     );
+}
+
+export default function ParticipantsPage() {
+    const hydrated = useHydrated();
+    if (!hydrated) return <section className="legacy-page" role="status">토론자를 불러오는 중…</section>;
+    return <ParticipantsContent />;
 }

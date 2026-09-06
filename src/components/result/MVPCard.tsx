@@ -30,7 +30,7 @@ interface MVPCardProps {
 
 // 5각형 레이더 차트 컴포넌트
 function RadarChart({ scores }: { scores: EvaluationScores }) {
-    const labels = ['논리도', '흡입력', '수행력', '전략성', '몰입도'];
+    const labels = ['논리성', '설득력', '충실도', '흐름', '영향력'];
     const values = [scores.logic, scores.persuasion, scores.adherence, scores.flow, scores.impact];
     const maxValue = 10;
     const centerX = 120;
@@ -170,7 +170,7 @@ export default function MVPCard({ mvp, participants, isLoading }: MVPCardProps) 
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
                     />
-                    <span className="text-sm text-amber-700">AI가 토론을 평가하고 있습니다...</span>
+                    <span className="text-sm text-amber-700">AI가 토론을 평가하고 있어요…</span>
                 </div>
             </div>
         );
@@ -284,7 +284,7 @@ export function RankingList({ participants }: { participants: ParticipantEvaluat
                 })}
             </div>
             <p className="text-[10px] text-text-tertiary text-center mt-3 pt-2 border-t border-gray-100">
-                점수 = AI 평가 (논리 · 근거 · 설득 · 창의 · 반박)
+                AI 평가 기준 · 논리성 · 설득력 · 충실도 · 흐름 · 영향력
             </p>
         </div>
     );

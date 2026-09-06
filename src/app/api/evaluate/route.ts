@@ -1,7 +1,7 @@
-// AI 토론 평가 API (BYOK)
+import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText } from 'ai';
-import { createProviders, MODELS, type ApiKeys } from '@/lib/ai/config';
+import { createProviders, MODELS } from '@/lib/ai/config';
 
 export interface EvaluationScores {
     argument: number;
@@ -29,21 +29,19 @@ export interface EvaluationResult {
 }
 
 export async function POST(request: NextRequest) {
+    if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json();
-        const { topic, messages, participantNames, apiKeys } = body as {
+        const { topic, messages, participantNames } = body as {
             topic: string;
             messages: { author: string; content: string; isModerator?: boolean }[];
             participantNames: string[];
-            apiKeys?: ApiKeys;
         };
 
         if (!topic || !messages || !participantNames || participantNames.length === 0) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
-
-        const keys = apiKeys || {};
-        const providers = createProviders(keys);
+        const providers = createProviders();
 
         const transcript = messages
             .filter(m => !m.isModerator)
@@ -87,7 +85,7 @@ export async function POST(request: NextRequest) {
             result.text.match(/\{[\s\S]*\}/);
 
         if (!jsonMatch) {
-            console.error('[Evaluate] Failed to find JSON in response:', result.text.slice(0, 500));
+            console.error('[Evaluate] Failed to find JSON in response:');
             throw new Error('Failed to parse AI response');
         }
 
@@ -144,7 +142,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(evaluationResult);
 
     } catch (error) {
-        console.error('Evaluate API Error:', error);
+        console.error('Evaluate API Error:');
         return NextResponse.json({ error: 'Failed to evaluate debate' }, { status: 500 });
     }
 }

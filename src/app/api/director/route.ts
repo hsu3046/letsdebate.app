@@ -1,22 +1,22 @@
+import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 /**
  * Director API v4 - 토론 전략 생성
  * @description Director AI가 토론 주제를 분석하여 각 AI에게 역할/입장 부여
- * BYOK: 클라이언트에서 apiKeys 수신
  */
 
-import { createProviders, MODELS, type ApiKeys } from '@/lib/ai/config';
+import { createProviders, MODELS } from '@/lib/ai/config';
 import { CHARACTERS } from '@/lib/characters';
 import { generateText } from 'ai';
 import { buildDirectorSystemPrompt } from '@/lib/prompts/v4';
 import type { DirectorOutput } from '@/lib/prompts/v4';
 
 export async function POST(request: Request) {
+    if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
-        const { topic, participants, mode = '1v1', apiKeys } = await request.json() as {
+        const { topic, participants, mode = '1v1' } = await request.json() as {
             topic: string;
             participants: string[];
             mode?: '1v1' | 'roundtable';
-            apiKeys?: ApiKeys;
         };
 
         if (!topic || !participants || participants.length < 2) {
@@ -26,14 +26,7 @@ export async function POST(request: Request) {
             );
         }
 
-        if (!apiKeys?.GOOGLE_GENERATIVE_AI_API_KEY) {
-            return Response.json(
-                { error: 'API key not configured', fallback: true },
-                { status: 400 }
-            );
-        }
-
-        const providers = createProviders(apiKeys);
+        const providers = createProviders();
 
         console.log('[Director v4] Topic:', topic);
         console.log('[Director v4] Participants:', participants);
@@ -67,7 +60,7 @@ export async function POST(request: Request) {
         return Response.json(parsed);
 
     } catch (error) {
-        console.error('[Director v4] Error:', error);
+        console.error('[Director v4] Error:');
         return Response.json(
             { error: 'Director API failed', fallback: true },
             { status: 500 }
@@ -150,8 +143,8 @@ function parseDirectorResponse(
         }
 
         return null;
-    } catch (e) {
-        console.error('[Director v4] Parse error:', e);
+    } catch {
+        console.error('[Director v4] Parse error:');
         return null;
     }
 }

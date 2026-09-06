@@ -1,10 +1,10 @@
+import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 // Debate API Route - Multi-Provider AI Integration
-// BYOK v1 - 클라이언트에서 apiKeys 수신
 
 import { NextRequest } from 'next/server';
 import { streamText } from 'ai';
 import { getModelForCharacter } from '@/lib/ai/modelMapping';
-import { createProviders, MODELS, type ApiKeys } from '@/lib/ai/config';
+import { createProviders, MODELS } from '@/lib/ai/config';
 // v4 프롬프트 시스템
 import {
     buildPrompt,
@@ -21,6 +21,7 @@ import type { Participant, Topic, Stance } from '@/lib/types';
 
 
 export async function POST(request: NextRequest) {
+    if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json();
         const {
@@ -39,7 +40,6 @@ export async function POST(request: NextRequest) {
             coachData,
             turnInfo,
             lang = 'ko',
-            apiKeys
         } = body as {
             type: 'opening' | 'debate' | 'closing';
             participant: Participant;
@@ -56,17 +56,14 @@ export async function POST(request: NextRequest) {
             coachData?: CoachOutput;
             turnInfo?: TurnInfo;
             lang?: string;
-            apiKeys?: ApiKeys;
         };
 
         if (!type || !participant || !topic) {
             return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
         }
 
-        const keys = apiKeys || {};
-
         // Get model for this character (with fallback)
-        const { model, modelName, provider, isFallback, maxTokens, temperature: defaultTemp } = getModelForCharacter(participant.id, keys);
+        const { model, modelName, provider, isFallback, maxTokens, temperature: defaultTemp } = getModelForCharacter(participant.id);
 
         // v4: 모델별 Temperature 적용
         const char = getCharacterById(participant.id);
@@ -74,14 +71,6 @@ export async function POST(request: NextRequest) {
         const v4Temperature = MODEL_TEMPERATURES[aiModelName] ?? defaultTemp;
 
         console.log(`[Debate API v4] Character: ${participant.id} → Model: ${modelName} (${provider})${isFallback ? ' [FALLBACK]' : ''} | temp: ${v4Temperature}`);
-
-        // Check if Google API key is configured (minimum requirement)
-        if (!keys.GOOGLE_GENERATIVE_AI_API_KEY) {
-            return new Response(JSON.stringify({
-                content: generateMockResponse(type, participant, topic),
-                mock: true,
-            }), { headers: { 'Content-Type': 'application/json' } });
-        }
 
         // ===== v4 프롬프트 시스템 적용 =====
         const mode: DebateMode = debateMode || 'roundtable';
@@ -113,7 +102,7 @@ export async function POST(request: NextRequest) {
         // ===== Retry 로직 (지수 백오프) =====
         const MAX_RETRIES = 3;
         const INITIAL_DELAY_MS = 1000;
-        const providers = createProviders(keys);
+        const providers = createProviders();
 
         let lastError: Error | null = null;
 
@@ -126,6 +115,7 @@ export async function POST(request: NextRequest) {
                 }
 
                 const result = await streamText({
+                            onError: () => { console.error('AI 모델 응답을 완료하지 못했습니다.'); },
                     model: model,
                     system: systemPrompt,
                     prompt: topic,
@@ -140,8 +130,7 @@ export async function POST(request: NextRequest) {
                     lastError.message.includes('529') ||
                     lastError.message.includes('Overloaded');
 
-                console.error(`[Debate API v4] Attempt ${attempt + 1}/${MAX_RETRIES} FAILED (${provider}):`,
-                    isOverloaded ? 'Overloaded - will retry' : lastError.message);
+                console.error(`[Debate API v4] Attempt ${attempt + 1}/${MAX_RETRIES} FAILED (${provider}):`);
 
                 if (!isOverloaded) break;
             }
@@ -152,6 +141,7 @@ export async function POST(request: NextRequest) {
 
         try {
             const fallbackResult = await streamText({
+                            onError: () => { console.error('AI 모델 응답을 완료하지 못했습니다.'); },
                 model: providers.google(MODELS.FALLBACK_1),
                 system: systemPrompt,
                 prompt: topic,
@@ -159,9 +149,10 @@ export async function POST(request: NextRequest) {
             });
 
             return fallbackResult.toTextStreamResponse();
-        } catch (fallbackError) {
+        } catch {
             console.error('[Debate API v4] FALLBACK_1 failed, trying FALLBACK_2');
             const fallback2Result = await streamText({
+                            onError: () => { console.error('AI 모델 응답을 완료하지 못했습니다.'); },
                 model: providers.google(MODELS.FALLBACK_2),
                 system: systemPrompt,
                 prompt: topic,
@@ -173,22 +164,9 @@ export async function POST(request: NextRequest) {
 
 
     } catch (error) {
-        console.error('Debate API Error:', error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        console.error('Debate API Error:');
         return new Response(JSON.stringify({
             error: 'Failed to generate response',
-            details: errorMessage,
         }), { status: 500 });
     }
-}
-
-
-function generateMockResponse(type: 'opening' | 'debate' | 'closing', participant: Participant, topic: string): string {
-    if (type === 'opening') {
-        return `안녕하세요, ${participant.job} ${participant.name}입니다.\n\n"${topic}" 주제에 대해 ${participant.styleName}의 관점에서 말씀드리겠습니다.\n\n저는 이 이슈를 세 가지 측면에서 바라봅니다.\n\n첫째, 현황과 문제점을 정확히 인식해야 합니다.\n둘째, 다양한 이해관계자의 입장을 균형 있게 고려해야 합니다.\n셋째, 장기적 관점에서 지속 가능한 해결책을 모색해야 합니다.`;
-    }
-    if (type === 'closing') {
-        return `오늘 토론을 마무리하며, ${participant.styleName}로서 핵심을 정리드리겠습니다.\n\n이 주제에 대해 다양한 시각이 제시되었지만, 저는 처음 입장을 유지합니다.\n\n감사합니다.`;
-    }
-    return `앞서 말씀하신 논점에 대해 의견을 드리겠습니다.\n\n${participant.styleName}으로서, 저는 조금 다른 시각을 가지고 있습니다.\n\n그 주장은 흥미롭지만, 우리가 간과하고 있는 측면이 있습니다.`;
 }

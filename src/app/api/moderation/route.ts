@@ -1,8 +1,8 @@
 /**
- * OpenAI Moderation API - 콘텐츠 안전성 검사 (BYOK)
+ * OpenAI Moderation API - 콘텐츠 안전성 검사
  */
 import { NextRequest, NextResponse } from 'next/server';
-import type { ApiKeys } from '@/lib/ai/config';
+import 'server-only';
 
 interface ModerationResult {
     flagged: boolean;
@@ -18,16 +18,15 @@ interface ModerationResponse {
 
 export async function POST(req: NextRequest) {
     try {
-        const { input, apiKeys } = await req.json() as {
+        const { input } = await req.json() as {
             input: string;
-            apiKeys?: ApiKeys;
         };
 
         if (!input || typeof input !== 'string') {
             return NextResponse.json({ error: 'Input text is required' }, { status: 400 });
         }
 
-        const openaiKey = apiKeys?.OPENAI_API_KEY;
+        const openaiKey = process.env.OPENAI_API_KEY;
 
         if (!openaiKey) {
             // API 키 없으면 moderation 스킵
@@ -47,7 +46,7 @@ export async function POST(req: NextRequest) {
         });
 
         if (!response.ok) {
-            console.error('[Moderation API] Error:', response.status, await response.text());
+            console.error('[Moderation API] Error:', response.status);
             return NextResponse.json({
                 flagged: false,
                 message: 'Moderation check skipped due to API error',
@@ -77,7 +76,7 @@ export async function POST(req: NextRequest) {
         });
 
     } catch (error) {
-        console.error('[Moderation API] Exception:', error);
+        console.error('[Moderation API] Request failed');
         return NextResponse.json({
             flagged: false,
             message: 'Moderation check skipped due to error',

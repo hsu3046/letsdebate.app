@@ -4,6 +4,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://letsdebate.app';
 
     return [
+        { url: `${baseUrl}/topics`, changeFrequency: 'weekly', priority: 0.9 },
         {
             url: baseUrl,
             lastModified: new Date(),
@@ -11,7 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 1,
         },
         {
-            url: `${baseUrl}/setup`,
+            url: `${baseUrl}/tournament/new`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.9,

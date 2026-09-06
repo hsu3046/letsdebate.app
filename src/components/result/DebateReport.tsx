@@ -168,7 +168,7 @@ export default function DebateReport({
                     </h3>
                     <p className="text-xs text-text-tertiary flex items-center gap-1.5">
                         <span className="text-red-400">♥</span>
-                        가장 인상적이었던 토론자를 선택해주세요
+                        가장 인상적이었던 토론자를 선택해 주세요
                     </p>
                 </div>
                 <div className="bg-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -240,7 +240,7 @@ export default function DebateReport({
                                             </div>
                                         ) : isLoadingEvaluation ? (
                                             <div className="flex flex-col items-end ml-auto mr-1">
-                                                <span className="text-[10px] text-text-tertiary">점수 계산중</span>
+                                                <span className="text-[10px] text-text-tertiary">점수를 계산하는 중…</span>
                                             </div>
                                         ) : null}
                                         {/* 발언 통계 - 점수 없을 때도 오른쪽 정렬 */}
@@ -260,7 +260,7 @@ export default function DebateReport({
                                 animate={{ opacity: 1, y: 0 }}
                                 className="text-xs text-center text-red-500 mt-3 font-medium"
                             >
-                                ♥ {votedParticipant}님을 선택했습니다!
+                                ♥ {votedParticipant}님을 선택했어요
                             </motion.p>
                         )}
                     </div>

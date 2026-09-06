@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft, MessageSquare } from 'lucide-react';
@@ -8,20 +8,12 @@ import { ArrowLeft, MessageSquare } from 'lucide-react';
 function LegalContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
-    const [activeTab, setActiveTab] = useState<'terms' | 'privacy'>('terms');
-
-    // URL query param에 따라 탭 설정
-    useEffect(() => {
-        const tab = searchParams.get('tab');
-        if (tab === 'privacy') {
-            setActiveTab('privacy');
-        }
-    }, [searchParams]);
+    const activeTab = searchParams.get('tab') === 'privacy' ? 'privacy' : 'terms';
 
     return (
         <div className="min-h-screen">
             {/* Header + Tabs (sticky) */}
-            <div className="sticky top-0 bg-bg-primary/95 backdrop-blur-sm border-b border-glass-border z-10">
+            <div className="sticky top-16 md:top-0 bg-bg-primary/95 backdrop-blur-sm border-b border-glass-border z-10">
                 {/* Header */}
                 <div className="max-w-3xl mx-auto px-4 py-4 flex items-center gap-4">
                     <button onClick={() => router.back()} className="text-text-tertiary hover:text-text-primary transition-colors">
@@ -34,27 +26,27 @@ function LegalContent() {
                 <div className="max-w-3xl mx-auto px-4">
                     <div className="flex justify-center gap-2 border-t border-glass-border">
                         <button
-                            onClick={() => setActiveTab('terms')}
+                            onClick={() => router.replace('/legal', { scroll: false })}
                             className={`px-4 py-3 text-base font-bold transition-colors relative ${activeTab === 'terms'
-                                ? 'text-primary-purple'
+                                ? 'text-accent'
                                 : 'text-text-tertiary hover:text-text-secondary'
                                 }`}
                         >
                             이용약관
                             {activeTab === 'terms' && (
-                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-purple" />
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent" />
                             )}
                         </button>
                         <button
-                            onClick={() => setActiveTab('privacy')}
+                            onClick={() => router.replace('/legal?tab=privacy', { scroll: false })}
                             className={`px-4 py-3 text-base font-bold transition-colors relative ${activeTab === 'privacy'
-                                ? 'text-primary-purple'
+                                ? 'text-accent'
                                 : 'text-text-tertiary hover:text-text-secondary'
                                 }`}
                         >
                             개인정보처리방침
                             {activeTab === 'privacy' && (
-                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-purple" />
+                                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-accent" />
                             )}
                         </button>
                     </div>
@@ -246,7 +238,7 @@ function PrivacyContent() {
             <div className="pt-6 border-t border-glass-border">
                 <Link
                     href="/feedback"
-                    className="flex items-center justify-center gap-2 w-full py-4 bg-primary-purple text-white font-bold rounded-xl hover:bg-primary-purple/90 transition-colors"
+                    className="flex items-center justify-center gap-2 w-full py-4 bg-accent text-white font-bold rounded-xl hover:bg-accent/90 transition-colors"
                 >
                     <MessageSquare size={20} />
                     고객센터 및 피드백 문의하기

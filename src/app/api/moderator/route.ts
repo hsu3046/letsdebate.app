@@ -1,9 +1,9 @@
+import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 // Moderator API Route - AI-Generated Moderator Messages
-// BYOK: 클라이언트에서 apiKeys 수신
 
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText } from 'ai';
-import { createProviders, MODERATOR_MODEL, type ApiKeys } from '@/lib/ai/config';
+import { createProviders, MODERATOR_MODEL } from '@/lib/ai/config';
 
 // 마크다운 문법 제거 함수
 function stripMarkdown(text: string): string {
@@ -28,7 +28,6 @@ interface ModeratorRequest {
     isRedebate?: boolean;
     recentMessages?: { author: string; content: string }[];
     allMessages?: { author: string; content: string; isModerator?: boolean }[];
-    apiKeys?: ApiKeys;
 }
 
 // 각 타입별 AI 프롬프트
@@ -82,9 +81,10 @@ const MODERATOR_PROMPTS: Record<ModeratorMessageType, (req: ModeratorRequest) =>
 
 
 export async function POST(request: NextRequest) {
+    if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json() as ModeratorRequest;
-        const { type, topic, participants, humanName, apiKeys } = body;
+        const { type, topic, participants, humanName } = body;
 
         if (!type || !topic || !participants) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -94,16 +94,7 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: `Invalid message type: ${type}` }, { status: 400 });
         }
 
-        const keys = apiKeys || {};
-
-        if (!keys.GOOGLE_GENERATIVE_AI_API_KEY) {
-            return NextResponse.json({
-                content: getFallbackMessage(type, topic, participants, humanName),
-                fallback: true
-            });
-        }
-
-        const providers = createProviders(keys);
+        const providers = createProviders();
 
         const promptFn = MODERATOR_PROMPTS[type];
         const prompt = promptFn(body);
@@ -122,7 +113,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ content });
 
     } catch (error) {
-        console.error('[Moderator API] Error:', error);
+        console.error('[Moderator API] Error:');
         return NextResponse.json({ error: 'Failed to generate moderator message' }, { status: 500 });
     }
 }

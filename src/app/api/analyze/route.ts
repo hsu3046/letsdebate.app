@@ -1,7 +1,7 @@
-// Analyze API Route - Background Analysis (BYOK)
+import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText } from 'ai';
-import { createProviders, MODELS, type ApiKeys } from '@/lib/ai/config';
+import { createProviders, MODELS } from '@/lib/ai/config';
 
 interface AnalyzeRequest {
     topic: string;
@@ -9,25 +9,19 @@ interface AnalyzeRequest {
     participants: { name: string; job: string }[];
     existingKeywords?: string[];
     existingSummary?: string;
-    apiKeys?: ApiKeys;
 }
 
 export async function POST(request: NextRequest) {
+    if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json() as AnalyzeRequest;
-        const { topic, messages, participants, existingKeywords, existingSummary, apiKeys } = body;
+        const { topic, messages, participants, existingKeywords, existingSummary } = body;
 
         if (!topic || !messages || messages.length === 0) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const keys = apiKeys || {};
-
-        if (!keys.GOOGLE_GENERATIVE_AI_API_KEY) {
-            return NextResponse.json({ keywords: [], highlights: [], summary: '', fallback: true });
-        }
-
-        const providers = createProviders(keys);
+        const providers = createProviders();
 
         const messagesText = messages.map(m => `[${m.author}]: ${m.content}`).join('\n\n');
         const existingInfo = existingKeywords && existingKeywords.length > 0
@@ -60,7 +54,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ keywords: [], highlights: [], summary: '' });
 
     } catch (error) {
-        console.error('[Analyze API] Error:', error);
+        console.error('[Analyze API] Error:');
         return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
     }
 }

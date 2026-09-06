@@ -6,7 +6,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Trophy, PauseCircle, MessageSquare, ChevronRight, Home } from 'lucide-react';
 import { useDebateStore } from '@/store/debateStore';
-import { useApiKeyStore } from '@/store/apiKeyStore';
 import { getCharacterById } from '@/lib/characters';
 import FadeInView from '@/components/FadeInView';
 import DebateReport from '@/components/result/DebateReport';
@@ -106,8 +105,6 @@ export default function StatsPage() {
         }
     };
 
-    // BYOK: API 키 스토어
-    const getApiKeys = useApiKeyStore((state) => state.getApiKeys);
 
     useEffect(() => {
         if (setup.participants.length === 0) {
@@ -211,7 +208,6 @@ export default function StatsPage() {
                         content: m.content,
                     })),
                     participantNames: setup.participants.map(p => p.name),
-                    apiKeys: getApiKeys(), // BYOK
                 }),
             });
 
@@ -353,21 +349,21 @@ export default function StatsPage() {
         const avgCharsPerStatement = totalStatements > 0 ? totalChars / totalStatements : 0;
 
         if (totalStatements === 0) {
-            aiFeedback = '다음에는 더 적극적으로 참여해보세요!';
+            aiFeedback = '다음 토론에서는 생각을 들려주세요';
         } else if (totalStatements <= 2 && totalChars < 100) {
-            aiFeedback = '짧지만 핵심을 전달했어요! 다음엔 조금 더 자세한 의견도 좋아요.';
+            aiFeedback = '짧은 의견을 나눠 주셨네요. 다음에는 이유나 예시를 덧붙여 보세요.';
         } else if (totalStatements <= 2 && totalChars >= 100) {
-            aiFeedback = '몇 마디 안 했지만 한마디 한마디가 묵직했어요!';
+            aiFeedback = '한 번의 발언에 많은 생각을 담아 주셨네요';
         } else if (totalStatements <= 5 && totalChars < 300) {
-            aiFeedback = '꾸준히 참여하셨네요! 조금 더 깊이 있는 의견도 기대할게요.';
+            aiFeedback = '꾸준히 의견을 나눠 주셨네요. 다음에도 함께해 주세요.';
         } else if (totalStatements <= 5 && totalChars >= 300) {
-            aiFeedback = '적극적으로 토론에 참여해주셨네요! 균형 잡힌 의견이 인상적이었어요.';
+            aiFeedback = '여러 차례 의견을 나누며 토론에 적극적으로 참여하셨어요';
         } else {
-            aiFeedback = '토론의 핵심 참가자셨네요! AI들도 당신의 의견에 자극받았을 거예요.';
+            aiFeedback = '많은 발언으로 토론에 함께해 주셨어요';
         }
 
         if (avgCharsPerStatement > 200) {
-            aiFeedback += ' 심층적인 의견을 주셨어요!';
+            aiFeedback += ' 자세한 의견을 들려주셨어요';
         }
 
         return {
@@ -385,8 +381,8 @@ export default function StatsPage() {
     const userAnalysis = getUserAnalysis();
 
     return (
-        <section className="min-h-screen overflow-y-auto p-4 pt-3 pb-20">
-            <div className="max-w-[420px] mx-auto pb-6">
+        <section className="legacy-page">
+            <div className="max-w-[760px] mx-auto pb-6">
                 {/* Header */}
                 <FadeInView delay={0.1} className="text-center mb-6">
                     <motion.div
@@ -398,10 +394,10 @@ export default function StatsPage() {
                         {state.wasStopped ? <PauseCircle size={32} className="text-white" /> : <Trophy size={32} className="text-white" />}
                     </motion.div>
                     <h1 className="font-title text-2xl text-text-primary mb-1">
-                        {state.wasStopped ? '토론이 중단되었습니다' : '토론 통계'}
+                        {state.wasStopped ? '중단된 토론' : '토론 통계'}
                     </h1>
                     <p className="text-sm text-text-secondary">
-                        {state.wasStopped ? '중간까지의 토론 내용을 바탕으로 통계입니다.' : '참가자별 발언 통계와 평가 결과입니다.'}
+                        {state.wasStopped ? '중단하기 전까지의 발언을 바탕으로 정리했어요' : '참가자별 발언과 평가 결과를 확인해 보세요'}
                     </p>
                 </FadeInView>
 
@@ -448,7 +444,7 @@ export default function StatsPage() {
                             </h3>
                             <div className="bg-gradient-to-b from-amber-50 to-orange-50 rounded-2xl p-8 border border-amber-100 shadow-sm">
                                 <div className="flex flex-col items-center gap-3">
-                                    <div className="text-sm text-amber-700">이번 토론의 MVP를 선정하고 있어요...</div>
+                                    <div className="text-sm text-amber-700">이번 토론의 MVP를 선정하고 있어요…</div>
                                     <div className="flex gap-1.5">
                                         <motion.div className="w-2 h-2 bg-amber-400 rounded-full" animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity, delay: 0 }} />
                                         <motion.div className="w-2 h-2 bg-amber-400 rounded-full" animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1, repeat: Infinity, delay: 0.2 }} />
@@ -505,7 +501,7 @@ export default function StatsPage() {
                             <div className="flex flex-wrap items-center justify-center gap-2 bg-gray-50 rounded-2xl p-4">
                                 <div className="flex items-center gap-2 text-sm text-text-tertiary">
                                     <div className="w-4 h-4 border-2 border-gray-300 border-t-transparent rounded-full animate-spin" />
-                                    키워드 분석 중...
+                                    자주 나온 단어를 찾고 있어요…
                                 </div>
                             </div>
                         )}
@@ -520,7 +516,7 @@ export default function StatsPage() {
                     whileTap={{ scale: 0.97 }}
                     transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                 >
-                    사회자 종합 정리 보기
+                    토론 핵심 정리 보기
                     <ChevronRight size={18} />
                 </motion.button>
             </div>

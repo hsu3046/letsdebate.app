@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useApiKeyStore } from '@/store/apiKeyStore';
 import { Topic, TeamAssignment, Participant, Character } from '@/lib/types';
 import { getCharacterById } from '@/lib/characters';
 import { RANDOM_TOPICS } from '@/lib/topics';
@@ -55,8 +54,6 @@ export function useDebateInitialization({
     const initializationRef = useRef(false);
     const directorStrategiesRef = useRef<Record<string, any> | null>(null);
 
-    // BYOK: API 키 스토어에서 키 가져오기
-    const getApiKeys = useApiKeyStore((state) => state.getApiKeys);
 
     useEffect(() => {
         if (participants.length === 0) {
@@ -140,7 +137,6 @@ export function useDebateInitialization({
                             topic: topicTitle,
                             participants: aiNames,
                             mode: debateType || '1v1',
-                            apiKeys: getApiKeys(), // BYOK
                         }),
                     });
 

@@ -2,7 +2,6 @@
 'use client';
 
 import { useState, useCallback } from 'react';
-import { useApiKeyStore } from '@/store/apiKeyStore';
 import type { Participant, DebateMessage, InteractionMeta, Topic, Stance } from '@/lib/types';
 
 interface UseDebateAIOptions {
@@ -83,8 +82,6 @@ export function useDebateAI({ topic, topicData, context, participants, teamAssig
     const [error, setError] = useState<string | null>(null);
     const [streamingText, setStreamingText] = useState('');
 
-    // BYOK: API 키 스토어에서 키 가져오기
-    const getApiKeys = useApiKeyStore((state) => state.getApiKeys);
 
     // Coach API 호출
     const fetchCoachInstruction = async (
@@ -109,7 +106,6 @@ export function useDebateAI({ topic, topicData, context, participants, teamAssig
                     phase,
                     mode: mode === 'vs' ? '1v1' : mode,
                     turnInfo,
-                    apiKeys: getApiKeys(), // BYOK
                 }),
             });
 
@@ -179,7 +175,6 @@ export function useDebateAI({ topic, topicData, context, participants, teamAssig
                     directorStrategy: options.directorStrategy,
                     coachData,
                     turnInfo,
-                    apiKeys: getApiKeys(), // BYOK
                 }),
             });
 
@@ -218,7 +213,7 @@ export function useDebateAI({ topic, topicData, context, participants, teamAssig
             setIsLoading(false);
             throw err;
         }
-    }, [topic, topicData, context, participants, teamAssignments, debateMode, getApiKeys]);
+    }, [topic, topicData, context, participants, teamAssignments, debateMode]);
 
     const generateSummary = useCallback(async (messages: DebateMessage[]): Promise<string> => {
         setIsLoading(true);
@@ -233,7 +228,6 @@ export function useDebateAI({ topic, topicData, context, participants, teamAssig
                     topic,
                     messages: messages.map(m => ({ author: m.author, content: m.content })),
                     participants,
-                    apiKeys: getApiKeys(), // BYOK
                 }),
             });
 
@@ -263,7 +257,7 @@ export function useDebateAI({ topic, topicData, context, participants, teamAssig
             setIsLoading(false);
             throw err;
         }
-    }, [topic, participants, getApiKeys]);
+    }, [topic, participants]);
 
     return {
         isLoading,

@@ -115,7 +115,7 @@ export default function ModeratorSummary({
                     <div>
                         <h2 className="text-lg font-bold flex items-center gap-2">
                             <ClipboardList size={18} className="text-emerald-600" />
-                            사회자 종합 정리
+                            토론 핵심 정리
                         </h2>
                         <p className="text-sm text-text-secondary mt-0.5">
                             오늘 토론의 핵심을 정리했어요
@@ -144,7 +144,7 @@ export default function ModeratorSummary({
                         className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm"
                     >
                         <p className="text-sm text-text-secondary mb-4">
-                            오늘 토론에서는 크게 <span className="font-bold text-text-primary">{mainConflicts.length}가지</span> 관점이 충돌했습니다.
+                            이번 토론에서는 <span className="font-bold text-text-primary">{mainConflicts.length}가지</span> 관점이 나왔어요
                         </p>
 
                         <div className="space-y-3">
@@ -190,7 +190,7 @@ export function ModeratorSummaryLoading() {
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 rounded-2xl p-4 border border-emerald-100">
                 <h2 className="text-lg font-bold flex items-center gap-2">
                     <ClipboardList size={20} className="text-emerald-600" />
-                    사회자 종합 정리
+                    토론 핵심 정리
                 </h2>
             </div>
 
@@ -207,7 +207,7 @@ export function ModeratorSummaryLoading() {
                         <Loader2 size={32} className="text-accent" />
                     </motion.div>
                     <p className="text-sm text-text-tertiary">
-                        핵심 대립점을 분석하고 있어요...
+                        핵심 쟁점을 정리하고 있어요…
                     </p>
                     <div className="flex gap-1 mt-2">
                         {[0, 1, 2].map((i) => (

@@ -20,11 +20,11 @@ export default function KeyInsights({
 
     return (
         <div className="space-y-5">
-            {/* 더 생각해볼 질문 */}
+            {/* 더 생각해 볼 질문 */}
             <section>
                 <h3 className="text-sm font-bold text-text-primary mb-3 flex items-center gap-2">
                     <HelpCircle size={16} className="text-blue-500" />
-                    더 생각해볼 질문
+                    더 생각해 볼 질문
                 </h3>
                 <motion.div
                     initial={{ opacity: 0 }}
@@ -72,7 +72,7 @@ export function KeyInsightsLoading() {
                         <Loader2 size={32} className="text-amber-500" />
                     </motion.div>
                     <p className="text-sm text-text-tertiary">
-                        기억에 남을 발언을 찾고 있어요...
+                        기억에 남을 발언을 찾고 있어요…
                     </p>
                     <div className="flex gap-1 mt-2">
                         {[0, 1, 2].map((i) => (

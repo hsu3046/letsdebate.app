@@ -10,23 +10,23 @@ import FadeInView from '@/components/FadeInView';
 
 // 캐릭터 데이터 (characters.ts 기반)
 const characters = [
-    { id: 'henry', name: '헨리', avatarImage: '/avatars/avatar_henry.jpeg', aiModel: 'Gemini', trait: '쉬운설명', desc: '초등학교 선생님. 미래의 아이들에게 부끄럽지 않은 선택이 무엇인지 따뜻하게 질문합니다.', color: 'bg-red-100' },
+    { id: 'henry', name: '헨리', avatarImage: '/avatars/avatar_henry.jpeg', aiModel: 'Gemini', trait: '쉬운 설명', desc: '초등학교 선생님. 미래의 아이들에게 부끄럽지 않은 선택이 무엇인지 따뜻하게 질문합니다.', color: 'bg-red-100' },
     { id: 'sophie', name: '소피', avatarImage: '/avatars/avatar_sophie.jpeg', aiModel: 'Claude', trait: '정의로움', desc: '인권 변호사. 공익이라는 이름 아래 소외된 약자들의 권리를 끝까지 대변합니다.', color: 'bg-purple-100' },
-    { id: 'victor', name: '빅터', avatarImage: '/avatars/avatar_victor.jpeg', aiModel: 'ChatGPT', trait: '기술전문', desc: 'AI 엔지니어. 인간의 불완전한 감정보다 데이터와 알고리즘의 완벽함을 신뢰합니다.', color: 'bg-cyan-100' },
-    { id: 'leo', name: '레오', avatarImage: '/avatars/avatar_leo.jpeg', aiModel: 'Grok', trait: '팩트폭격', desc: '베테랑 회계사. 감정을 배제하고 모든 것을 숫자와 기회비용으로 계산합니다.', color: 'bg-emerald-100' },
-    { id: 'max', name: '맥스', avatarImage: '/avatars/avatar_max.jpeg', aiModel: 'DeepSeek', trait: '비전지향', desc: '스타트업 창업가. 현실의 제약은 무시하고 세상을 바꿀 거대한 혁신을 이야기합니다.', color: 'bg-amber-100' },
+    { id: 'victor', name: '빅터', avatarImage: '/avatars/avatar_victor.jpeg', aiModel: 'ChatGPT', trait: '기술 전문가', desc: 'AI 엔지니어. 인간의 불완전한 감정보다 데이터와 알고리즘의 완벽함을 신뢰합니다.', color: 'bg-cyan-100' },
+    { id: 'leo', name: '레오', avatarImage: '/avatars/avatar_leo.jpeg', aiModel: 'Grok', trait: '숫자로 반박', desc: '베테랑 회계사. 감정을 배제하고 모든 것을 숫자와 기회비용으로 계산합니다.', color: 'bg-emerald-100' },
+    { id: 'max', name: '맥스', avatarImage: '/avatars/avatar_max.jpeg', aiModel: 'DeepSeek', trait: '미래를 보는 시선', desc: '스타트업 창업가. 현실의 제약은 무시하고 세상을 바꿀 거대한 혁신을 이야기합니다.', color: 'bg-amber-100' },
 
-    { id: 'chloe', name: '클로이', avatarImage: '/avatars/avatar_chloe.jpeg', aiModel: '준비중', trait: '원칙주의', desc: '윤리학 교수. 눈앞의 이익보다 옳고 그름의 도덕적 가치를 최우선으로 따집니다.', color: 'bg-indigo-100' },
-    { id: 'greg', name: '그렉', avatarImage: '/avatars/avatar_grek.jpeg', aiModel: '준비중', trait: '풍자+유머', desc: 'SNL 작가 출신 칼럼니스트. 날카로운 풍자와 유머로 세상을 비꼬아 버립니다.', color: 'bg-orange-100' },
-    { id: 'jenny', name: '제니', avatarImage: '/avatars/avatar_jenny.jpeg', aiModel: '준비중', trait: '감성충만', desc: '베스트셀러 에세이 작가. 차가운 논리보다 따뜻한 이야기로 마음을 움직입니다.', color: 'bg-pink-100' },
+    { id: 'chloe', name: '클로이', avatarImage: '/avatars/avatar_chloe.jpeg', aiModel: '준비 중', trait: '원칙주의', desc: '윤리학 교수. 눈앞의 이익보다 옳고 그름의 도덕적 가치를 최우선으로 따집니다.', color: 'bg-indigo-100' },
+    { id: 'greg', name: '그렉', avatarImage: '/avatars/avatar_grek.jpeg', aiModel: '준비 중', trait: '풍자와 유머', desc: 'SNL 작가 출신 칼럼니스트. 날카로운 풍자와 유머로 세상을 비꼬아 버립니다.', color: 'bg-orange-100' },
+    { id: 'jenny', name: '제니', avatarImage: '/avatars/avatar_jenny.jpeg', aiModel: '준비 중', trait: '마음을 잇는 이야기', desc: '베스트셀러 에세이 작가. 차가운 논리보다 따뜻한 이야기로 마음을 움직입니다.', color: 'bg-pink-100' },
 ];
 
 // 추천 매치업
 const recommendedMatchups = [
-    { chars: ['빅터', '제니'], reason: '논리 vs 감성의 극과극 대결', icon: '🔥' },
-    { chars: ['레오', '소피'], reason: '현실 vs 정의, 치열한 가치 충돌', icon: '⚔️' },
-    { chars: ['그렉', '헨리'], reason: '냉소 vs 희망, 세대 관점 충돌', icon: '💥' },
-    { chars: ['맥스', '클로이'], reason: '실행 vs 신중, 속도와 깊이의 대결', icon: '🎯' },
+    { chars: ['빅터', '제니'], reason: '논리와 감성이 맞붙는 대결', icon: '🔥' },
+    { chars: ['레오', '소피'], reason: '현실과 정의가 겨루는 가치관', icon: '⚔️' },
+    { chars: ['그렉', '헨리'], reason: '냉소와 희망이 만나는 토론', icon: '💥' },
+    { chars: ['맥스', '클로이'], reason: '실행과 신중함이 겨루는 대결', icon: '🎯' },
 ];
 
 // 업데이트 로그
@@ -35,21 +35,21 @@ const updates = [
         date: '2024.12.19',
         version: 'v0.2.0',
         title: '각 캐릭터의 토론 성능 개선',
-        desc: 'AI모델 및 프롬프트 대폭 수정',
+        desc: 'AI 모델과 토론 지침 개선',
         type: 'feature'
     },
     {
         date: '2024.12.16',
         version: 'v0.1.3',
         title: '토론 엔진 추가',
-        desc: '시스템 전면 개편 & MVP 선정 기능 탑재',
+        desc: '토론 진행 방식 개편과 MVP 선정 기능 추가',
         type: 'feature'
     },
     {
         date: '2024.12.14',
         version: 'v0.1.2',
         title: 'AI 두뇌 업그레이드',
-        desc: '모델 성능 개선 & 각종 편의 UI 대공사',
+        desc: 'AI 응답 품질과 사용 편의성 개선',
         type: 'feature'
     },
     { date: '2024.12.12', version: 'v0.1.1', title: '캐릭터 시스템 개편', desc: '8종 캐릭터의 말투와 성격이 더욱 뚜렷해졌습니다.', type: 'feature' },
@@ -62,40 +62,40 @@ const roadmap = [
     {
         status: 'done',
         title: '개성 만점 AI 논객 5인',
-        desc: '성격 확실한 5명의 캐릭터 × 5종류의 최신 AI'
+        desc: '개성 있는 캐릭터 5명과 다양한 AI 모델'
     },
     {
         status: 'done',
-        title: '탈탈 터는 토론 분석',
-        desc: '오늘의 MVP는 누구? 승패와 스탯 완벽 시각화'
+        title: '한눈에 보는 토론 분석',
+        desc: '경기 결과와 참가자별 평가 확인'
     },
 
     // 🚀 개발 중 (In Progress)
     {
         status: 'done',
-        title: '당신의 \'최애\'는 누구?',
-        desc: '내가 응원하는 캐릭터에게 한 표! 인기투표 기능'
+        title: '가장 마음에 드는 캐릭터는?',
+        desc: '응원하는 캐릭터에게 한 표 보내기'
     },
     {
         status: 'progress',
-        title: 'AI 두뇌 풀업그레이드',
-        desc: '더 똑똑하게, 더 인간미 넘치게 성능 개선'
+        title: 'AI 응답 품질 개선',
+        desc: '더 자연스럽고 깊이 있는 토론을 위한 개선'
     },
     // 📅 예정된 기능 (Planned)
     {
         status: 'planned',
-        title: '거짓말 탐지기 & 뉴스 장착',
-        desc: '실시간 최신 정보 반영과 칼 같은 팩트체크'
+        title: '참고 자료와 사실 확인',
+        desc: '새로운 정보를 참고하고 발언의 사실관계 확인'
     },
     {
         status: 'planned',
         title: '"인간 승리" 인증샷 공유',
-        desc: '치열했던 토론 성적표, 이미지로 멋지게 자랑하기'
+        desc: '토론 결과를 이미지로 저장하고 공유하기'
     },
     {
         status: 'planned',
         title: '비밀 업데이트 대기 중',
-        desc: '더 재미있는 기능들을 몰래 개발하고 있어요...'
+        desc: '더 재미있는 토론을 위한 기능을 준비하고 있어요'
     },
 ];
 
@@ -109,8 +109,8 @@ export default function NoticePage() {
     };
 
     return (
-        <section className="min-h-screen overflow-y-auto p-4 pt-3 pb-20">
-            <div className="max-w-[420px] mx-auto pb-6">
+        <section className="legacy-page">
+            <div className="max-w-[760px] mx-auto pb-6">
                 {/* 헤더 */}
                 <FadeInView delay={0.1}>
                     <div className="flex items-center mb-6">
@@ -176,7 +176,7 @@ export default function NoticePage() {
                                 <div className="space-y-2">
                                     <h3 className="font-semibold text-text-primary flex items-center gap-2">
                                         <span className="bg-accent text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">1</span>
-                                        주제는 구체적일수록 좋아요!
+                                        주제는 구체적일수록 좋아요
                                     </h3>
                                     <div className="ml-8 space-y-2 text-sm">
                                         <div className="flex items-center gap-2 text-red-600 bg-red-50 p-2 rounded-lg">
@@ -194,7 +194,7 @@ export default function NoticePage() {
                                 <div className="space-y-2">
                                     <h3 className="font-semibold text-text-primary flex items-center gap-2">
                                         <span className="bg-accent text-white w-6 h-6 rounded-full flex items-center justify-center text-sm">2</span>
-                                        상극인 캐릭터를 붙여보세요!
+                                        서로 다른 성격의 캐릭터를 골라 보세요
                                     </h3>
                                     <div className="ml-8 space-y-2">
                                         {recommendedMatchups.map((match, i) => (
@@ -222,7 +222,7 @@ export default function NoticePage() {
                             </div>
                             <div className="text-left flex-1">
                                 <h2 className="font-bold text-text-primary">AI 토론자들 소개</h2>
-                                <p className="text-sm text-text-secondary">개성 넘치는 토론 AI들을 만나보세요</p>
+                                <p className="text-sm text-text-secondary">개성 있는 AI 토론자들을 만나 보세요</p>
                             </div>
                             {expandedSection === 'characters' ?
                                 <ChevronUp className="w-5 h-5 text-text-tertiary" /> :
@@ -301,7 +301,7 @@ export default function NoticePage() {
                                                         <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">완료</span>
                                                     )}
                                                     {item.status === 'progress' && (
-                                                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">진행중</span>
+                                                        <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded">진행 중</span>
                                                     )}
                                                 </div>
                                                 <p className="text-sm text-text-secondary">{item.desc}</p>
@@ -364,13 +364,13 @@ export default function NoticePage() {
                         <div className="flex items-start gap-3">
                             <AlertCircle className="w-5 h-5 mt-0.5" />
                             <div>
-                                <h3 className="font-bold mb-1">의견을 들려주세요!</h3>
+                                <h3 className="font-bold mb-1">의견을 들려주세요</h3>
                                 <p className="text-blue-100 text-sm">
-                                    버그 신고, 기능 제안, 또는 그냥 하고 싶은 말이 있다면 언제든 연락주세요.
+                                    불편한 점이나 바라는 기능을 알려 주세요
                                 </p>
                                 <Link href="/feedback">
                                     <button className="mt-3 bg-white text-blue-600 px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-50 transition-colors">
-                                        피드백 보내기 →
+                                        의견 보내기 →
                                     </button>
                                 </Link>
                             </div>
@@ -379,37 +379,7 @@ export default function NoticePage() {
                 </FadeInView>
 
                 {/* Footer */}
-                <FadeInView delay={0.8}>
-                    <footer className="mt-8 pt-5 border-t border-gray-200 text-center">
-                        <p className="text-xs text-text-tertiary/80 leading-relaxed mb-3">
-                            이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다.
-                        </p>
-                        <p className="text-[9px] text-text-tertiary/60 leading-relaxed mb-2">
-                            본 서비스는 베타 테스트 중인 AI 시뮬레이션입니다. 생성된 콘텐츠는 사실과 다르거나 편향될 수 있으며,
-                            왈가왈부는 정보의 정확성이나 신뢰성을 보장하지 않습니다. 특히 법률, 의료, 금융 등 전문적인 조언으로
-                            활용하여 발생한 결과에 대해 서비스 제공자는 어떠한 법적 책임도 지지 않습니다.
-                        </p>
-                        <p className="text-[11px] text-text-secondary font-medium mb-2">
-                            <Link href="/legal" className="hover:text-accent transition-colors underline underline-offset-2">이용약관</Link>
-                            {' | '}
-                            <Link href="/legal?tab=privacy" className="hover:text-accent transition-colors underline underline-offset-2">개인정보처리방침</Link>
-                        </p>
-                        {/* Powered by */}
-                        <div className="flex items-center justify-center gap-2 mt-[10px] mb-4">
-                            <span className="text-xs text-text-primary">Powered by</span>
-                            <div className="flex items-center gap-3 ml-1">
-                                <img src="/logos/gemini.svg" alt="Gemini" className="h-6" />
-                                <img src="/logos/anthropic.svg" alt="Claude" className="h-6" />
-                                <img src="/logos/openai.svg" alt="OpenAI" className="h-6" />
-                                <img src="/logos/xai.svg" alt="Grok" className="h-6" />
-                                <img src="/DeepSeek_logo.svg" alt="DeepSeek" className="h-6" />
-                            </div>
-                        </div>
-                        <p className="text-[0.625rem] text-text-tertiary opacity-70">
-                            © 2025 왈가왈부(WalGaWalBu) · v0.2.0
-                        </p>
-                    </footer>
-                </FadeInView>
+
             </div>
         </section>
     );

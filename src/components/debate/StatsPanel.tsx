@@ -87,7 +87,7 @@ export default function StatsPanel({
                             <div className="flex items-center justify-between">
                                 <h2 className="text-lg font-bold flex items-center gap-2">
                                     <BarChart3 size={20} className="text-accent" />
-                                    토론 진행상태
+                                    토론 진행 상황
                                 </h2>
                                 <button
                                     onClick={onClose}
