@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 /**
  * Coach API v4 - 실시간 전술 지령
@@ -8,7 +9,7 @@ import { generateText } from 'ai';
 import { buildCoachSystemPrompt } from '@/lib/prompts/v4';
 import type { CoachOutput, TurnInfo } from '@/lib/prompts/v4';
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const {
@@ -107,3 +108,7 @@ function parseCoachResponse(text: string): CoachOutput | null {
         return null;
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

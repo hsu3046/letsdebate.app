@@ -11,7 +11,7 @@ import { CHARACTERS } from '@/lib/characters';
 import FadeInView from '@/components/FadeInView';
 import FlowSteps from '@/components/FlowSteps';
 import { useHydrated } from '@/hooks/useHydrated';
-import { consumeServerUsage, DAILY_LIMIT } from '@/lib/usageLimit';
+import { consumeServerUsage } from '@/lib/usageLimit';
 
 // MBTI 배지 색상
 const MBTI_COLORS: Record<string, string> = {
@@ -93,10 +93,10 @@ function ParticipantsContent() {
             return;
         }
 
-        // 서버 API로 사용량 차감 시도 (실패 시 localStorage 폴백)
+        // 계정 한도를 먼저 확인하며 실제 차감은 AI 요청에서 처리한다.
         const canProceed = await consumeServerUsage();
         if (!canProceed) {
-            alert(`오늘의 무료 사용 횟수(${DAILY_LIMIT}회)를 모두 사용했습니다.\n자정(KST) 이후에 다시 이용해주세요!`);
+            alert('오늘의 AI 이용 횟수를 모두 사용했어요. 한국 시간 자정 이후에 다시 이용해 주세요.');
             return;
         }
 

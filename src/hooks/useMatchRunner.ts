@@ -36,7 +36,7 @@ export function useMatchRunner() {
         let current: MatchMessage | null = null;
         try {
             const response = await fetch('/api/tournament/match', {
-                method: 'POST', headers: { 'Content-Type': 'application/json' }, signal: controller.signal,
+                method: 'POST', headers: { 'Content-Type': 'application/json', 'Idempotency-Key': runId }, signal: controller.signal,
                 body: JSON.stringify({ topic: tournament.topic, context: tournament.context, a: match.a.id, b: match.b.id, judge: tournament.judge.id, turnsPerSide: tournament.turnsPerSide }),
             });
             if (!response.ok) {

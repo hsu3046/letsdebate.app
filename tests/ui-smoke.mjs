@@ -19,6 +19,7 @@ const transcript = ['a', 'b', 'b', 'a'].map((side, index) => ({ type: 'message',
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(`${page.url()}\n${error.message}`));
+  await page.route('**/api/auth/session', route => route.fulfill({ json: { configured: true, user: { id: 'qa-user', name: '테스트 팬' } } }));
   await page.route('**/api/models', route => route.fulfill({ json: { models } }));
   let mode = 'complete';
   let calls = 0;

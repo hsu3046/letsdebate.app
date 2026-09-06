@@ -80,3 +80,14 @@
 - 카드 모음은 320·390·768·1024·1112·1440px에서 가로 넘침이 없고 브라우저 실행 오류가 없었다.
 - PR 범위는 현재 UI·1대1 토너먼트·서버 OpenRouter 연결·캐릭터 컬렉션이다. 로그인과 서버 사용량 제한은 사용자 요청에 따라 이 PR의 Codex 리뷰를 마친 뒤 별도로 구현한다.
 - 현재 경기 API에는 로그인·서버 사용량 차감·비용 원장이 없다. 운영 키를 연결한 공개 실행은 후속 운영 제한을 갖춘 뒤 진행한다. 기존 사용량 API도 새 토너먼트 실행의 제한으로 간주하지 않는다.
+
+## PR 리뷰 완료와 로그인 후속 구현
+
+- PR #1의 `979eb6da57`에 대해 Codex가 주요 지적 없음으로 리뷰를 완료했다. 리뷰 댓글은 https://github.com/hsu3046/letsdebate.app/pull/1#issuecomment-5556865221 이며 Vercel Preview와 Preview Comments 확인도 성공했다. 리뷰 확인 heartbeat는 종료 후 일시 정지했다. PR merge와 운영 배포는 수행하지 않았다.
+- 후속 브랜치는 `codex/service-auth-and-limits`다. Google OAuth 시작·복귀·세션 확인·로그아웃, 계정 이용 내역, 서버 인증·일일 한도·동시 실행·응답 재사용·OpenRouter 사용량 기록을 추가했다.
+- `npm test` 26개 통과. PGlite에서 실제 migration을 실행해 계정별 예약과 브라우저 역할의 테이블/RPC 접근 거부를 검증했다. 분할 SSE 원본 바이트 보존, 실제 비용 파싱, 업스트림 취소, 미확인 비용 null도 확인했다.
+- `npm run build`와 strict TypeScript 검사 통과. 신규 인증·원장·서비스·계정 UI·토너먼트 연동 파일의 ESLint 통과. 변경한 기존 엔진까지 포함한 넓은 검사에서는 원래 있던 debate/director의 explicit any 오류 2개와 경고 27개가 남아 있다. 해당 라인은 이번 변경에서 수정하지 않았다.
+- 프로덕션 로컬 서버에서 `test:auth-ui`와 `test:ui` 통과. 인증 미설정, 모의 Google 복귀 경로, 계정 조회·로그아웃·세션 오류 복구, 4강/8강·중단·오류·진출·기록을 검증했다. 320–1440px 가로 넘침 및 pageerror 없음. auth-ui의 오류 제거 확인은 Next.js route announcer와 구분되도록 대상 alert를 한정했다.
+- 스크린샷: `/tmp/letsdebate-auth-qa`, `/tmp/letsdebate-auth-tournament-qa`. 모바일·데스크톱 로그인과 계정 화면을 직접 확인했다.
+- Supabase/Google 설정과 실제 유료 AI 호출은 미실행이다. 원격 DB migration이나 외부 프로젝트 변경은 하지 않았다. 실제 계정 로그인·SSE 청구 내역 대조는 환경 연결 후 필요하다.
+- 의존성 audit에는 기존 PDF 패키지 html2pdf.js 0.12.1, jspdf 3.0.4의 critical 경고가 포함된다. 새 Supabase/PGlite 패키지에는 직접 경고가 없다. 전체 audit는 27개(critical 2, high 11, moderate 4, low 10)이며 이번 인증 작업에서 일괄 업그레이드하지 않았다. 운영 배포 전 영향 범위와 패치 버전을 확인해야 한다.

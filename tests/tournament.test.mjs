@@ -1,30 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import fs from 'node:fs';
-import path from 'node:path';
-import vm from 'node:vm';
-import { createRequire } from 'node:module';
-import ts from 'typescript';
+import { loadTS } from './helpers.mjs';
 
 // Run isolated TypeScript domain and route tests using the project's existing compiler.
-function loadTS(relativePath, overrides = {}, environment = {}) {
-  const filename = path.resolve(import.meta.dirname, '..', relativePath);
-  const requireFromFile = createRequire(filename);
-  const source = ts.transpileModule(fs.readFileSync(filename, 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
-  const loadedModule = { exports: {} };
-  const requireLocal = id => {
-    if (Object.hasOwn(overrides, id)) return overrides[id];
-    if (id === 'server-only') return {};
-    if (id.startsWith('@/') || id.startsWith('.')) {
-      const base = id.startsWith('@/') ? path.resolve('src', id.slice(2)) : path.resolve(path.dirname(filename), id);
-      const target = [base + '.ts', path.join(base, 'index.ts')].find(file => fs.existsSync(file));
-      if (target) return loadTS(target, overrides, environment);
-    }
-    return requireFromFile(id);
-  };
-  vm.runInThisContext(`(function(exports,require,module,__filename,__dirname,process){${source}\n})`, { filename })(loadedModule.exports, requireLocal, loadedModule, filename, path.dirname(filename), { env: environment });
-  return loadedModule.exports;
-}
 const { createBracket, advanceWinner, tournamentMarkdown } = loadTS('src/lib/tournament.ts');
 const { parseMatchEvent, verdictSchema } = loadTS('src/lib/tournamentProtocol.ts');
 const models = Array.from({ length: 8 }, (_, index) => ({ id: `test/model-${index}`, name: `Test: Model ${index}`, contextLength: 32000, promptPrice: 0, completionPrice: 0 }));
@@ -78,9 +56,11 @@ test('내보내기에 발언과 판정이 포함되고 입력 문자열을 그�
   assert.ok(text.includes(verdict.reason));
 });
 
-function mockRoute({ fail, invalidJudge = false, configured = true, allowedModels = '' } = {}) {
+function mockRoute({ fail, invalidJudge = false, configured = true, allowedModels = models.map(model => model.id).join(',') } = {}) {
   const calledModels = [];
   const route = loadTS('src/app/api/tournament/match/route.ts', {
+    '@/lib/ai/access/guard': { withAIRequest: (_kind, handler) => handler },
+    './access/context': { executionContext: { getStore: () => ({ signal: new AbortController().signal, usage: [], failed: false }) } },
     '@ai-sdk/openai': { createOpenAI: options => {
       assert.equal(options.baseURL, 'https://openrouter.ai/api/v1');
       assert.equal(options.apiKey, 'server-fixture-not-a-real-key');
@@ -93,7 +73,7 @@ function mockRoute({ fail, invalidJudge = false, configured = true, allowedModel
       },
       generateText: async options => { assert.ok(!options.prompt.includes('test/model-')); return { text: invalidJudge ? '{bad-json}' : JSON.stringify(verdict) }; },
     },
-  }, { OPENROUTER_API_KEY: configured ? 'server-fixture-not-a-real-key' : '', OPENROUTER_ALLOWED_MODELS: allowedModels });
+  }, { AI_EXECUTION_ENABLED: 'true', OPENROUTER_API_KEY: configured ? 'server-fixture-not-a-real-key' : '', OPENROUTER_ALLOWED_MODELS: allowedModels });
   return { ...route, calledModels };
 }
 const request = extra => new Request('http://localhost/api/tournament/match', { method: 'POST', body: JSON.stringify({ topic: 'AI가 만든 작품도 예술일까?', context: '', a: models[0].id, b: models[1].id, judge: models[2].id, turnsPerSide: 2, ...extra }) });
@@ -179,6 +159,8 @@ test('서버 제공 모델 제한은 심판까지 적용한다', async () => {
 test('기존 캐릭터 엔진도 서버 OpenRouter 키로만 연결한다', () => {
   const calls = [];
   const { createProviders, MODELS } = loadTS('src/lib/ai/config.ts', {
+    '@/lib/ai/access/guard': { withAIRequest: (_kind, handler) => handler },
+    './access/context': { executionContext: { getStore: () => ({ signal: new AbortController().signal, usage: [], failed: false }) } },
     '@ai-sdk/openai': { createOpenAI: options => {
       assert.equal(options.apiKey, 'server-fixture');
       return { chat: id => { calls.push(id); return id; } };
@@ -203,6 +185,7 @@ test('카탈로그에 운영자가 제공하도록 지정한 모델만 표시한
 test('기존 토론 API도 브라우저 키로 서버 연결을 우회할 수 없다', async () => {
   const names = ['analyze', 'coach', 'debate', 'director', 'evaluate', 'judge', 'moderator', 'moderator/analyze-interaction', 'questions', 'summary', 'summarize-opening'];
   const overrides = {
+    '@/lib/ai/access/guard': { withAIRequest: (_kind, handler) => handler },
     'next/server': { NextResponse: { json: (body, options) => Response.json(body, options) } },
     '@/lib/ai/config': {}, '@/lib/ai/modelMapping': {}, '@/lib/prompts/v4': {},
   };

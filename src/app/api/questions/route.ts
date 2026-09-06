@@ -1,10 +1,11 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 import { NextRequest } from 'next/server';
 import { generateText } from 'ai';
 import { getModeratorModel } from '@/lib/ai/modelMapping';
 import { createProviders, MODELS } from '@/lib/ai/config';
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json();
@@ -84,3 +85,7 @@ export async function POST(request: NextRequest) {
         }), { headers: { 'Content-Type': 'application/json' } });
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

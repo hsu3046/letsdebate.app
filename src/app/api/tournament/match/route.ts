@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { generateText, streamText } from 'ai';
 import { z } from 'zod';
 import { isContentAllowed } from '@/lib/topicFilter';
@@ -13,7 +14,7 @@ const requestSchema = z.object({
     turnsPerSide: z.union([z.literal(2), z.literal(3)]),
 }).strict().refine(data => data.a !== data.b, '서로 다른 모델을 선택해주세요.');
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
     const body = requestSchema.safeParse(await request.json().catch(() => null));
     if (!body.success) return Response.json({ error: '주제와 서로 다른 참가 모델, 경기 규칙을 확인해주세요.' }, { status: 400 });
     const { topic, context, a, b, judge, turnsPerSide } = body.data;
@@ -89,3 +90,5 @@ export async function POST(request: Request) {
         'X-Accel-Buffering': 'no',
     } });
 }
+
+export const POST = withAIRequest('match', handlePost);

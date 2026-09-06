@@ -3,6 +3,7 @@
 import { ReactNode, useEffect } from 'react';
 import { MotionConfig } from 'framer-motion';
 import AppShell from '@/components/AppShell';
+import { AuthProvider } from '@/components/AuthProvider';
 
 interface ClientLayoutProps {
     children: ReactNode;
@@ -16,7 +17,7 @@ export default function ClientLayout({ children }: ClientLayoutProps) {
     }, []);
     return (
         <MotionConfig reducedMotion="user">
-            <AppShell>{children}</AppShell>
+            <AuthProvider><AppShell>{children}</AppShell></AuthProvider>
         </MotionConfig>
     );
 }

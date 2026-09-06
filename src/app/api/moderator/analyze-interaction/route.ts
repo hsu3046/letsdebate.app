@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 // Phase 3: 백그라운드에서 맥락 기반 정밀 분석
 
@@ -24,7 +25,7 @@ interface AnalyzeInteractionResponse {
     source: 'ai';
 }
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json() as AnalyzeInteractionRequest;
@@ -115,3 +116,7 @@ ${participantList || '(없음)'}
         return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

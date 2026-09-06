@@ -153,55 +153,14 @@ export function getResetTimeString(): string {
 // 서버 API 연동 (하이브리드 모드)
 // ============================================
 
-import { getVisitorId } from './fingerprint';
-
-/**
- * 서버에서 남은 횟수 조회 (실패 시 localStorage 폴백)
- */
+/** Legacy preflight uses the verified account; the AI route owns the actual quota charge. */
 export async function getServerRemainingUsage(): Promise<number> {
-    try {
-        const visitorId = await getVisitorId();
-        const response = await fetch('/api/usage/check', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ visitorId }),
-        });
-
-        if (!response.ok) {
-            throw new Error('Server error');
-        }
-
-        const data = await response.json();
-        return data.remaining;
-    } catch (error) {
-        console.warn('Server usage check failed, using localStorage:', error);
-        return getRemainingUsage();
-    }
+    const response = await fetch('/api/usage/check', { method: 'POST', signal: AbortSignal.timeout(10000) });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || '이용 한도를 확인하지 못했어요.');
+    return data.remaining;
 }
 
-/**
- * 서버에서 사용량 차감 (실패 시 localStorage 폴백)
- * @returns true면 사용 가능, false면 제한 초과
- */
 export async function consumeServerUsage(): Promise<boolean> {
-    try {
-        const visitorId = await getVisitorId();
-        const response = await fetch('/api/usage/consume', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ visitorId }),
-        });
-
-        const data = await response.json();
-
-        // localStorage도 동기화
-        if (data.success) {
-            consumeUsage(); // localStorage에도 차감
-        }
-
-        return data.success;
-    } catch (error) {
-        console.warn('Server usage consume failed, using localStorage:', error);
-        return consumeUsage();
-    }
+    return await getServerRemainingUsage() > 0;
 }

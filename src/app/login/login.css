@@ -1,0 +1,23 @@
+.login-page { display: grid; align-items: center; min-height: 75vh; }
+.login-card { display: grid; grid-template-columns: 1fr 1.15fr; border: 2px solid var(--cup-ink); border-radius: 24px; overflow: hidden; box-shadow: 5px 6px 0 #d1d9be; background: #fffdf6; }
+.login-art { background: #eedcbf; position: relative; display: flex; flex-direction: column; justify-content: center; padding: 30px 24px; }
+.login-art img { width: 100%; height: auto; mix-blend-mode: multiply; border-radius: 50%; }
+.login-art .eyebrow { display: inline-flex; align-items: center; gap: 8px; }
+.login-sticker { align-self: center; background: #f2d951; border: 2px solid var(--cup-ink); padding: 12px 20px; border-radius: 9px; transform: rotate(-4deg); font-family: var(--cup-display); font-size: 20px; }
+.login-copy { padding: clamp(26px, 4vw, 54px); }
+.login-copy h1 { font-family: var(--cup-display); font-weight: 400; font-size: clamp(30px, 3.5vw, 48px); line-height: 1.4; margin: 20px 0; }
+.login-copy > p { color: #617052; line-height: 1.9; font-size: 14px; }
+.login-perks { display: grid; gap: 14px; margin: 26px 0; font-size: 13px; color: #33563c; }
+.login-perks > span { display: flex; align-items: center; gap: 10px; }
+.google-login { width: 100%; min-height: 52px; color: #233c30; background: #fff; border: 1.5px solid #b9c7ab; }
+.google-g { font: 800 22px Arial, sans-serif; color: #4285f4; }
+.login-copy .login-legal { font-size: 11px; margin: 20px 0; }
+.login-legal a { text-decoration: underline; text-underline-offset: 3px; }
+.login-copy .inline-alert { margin-top: 20px; }
+.account-link.compact { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--cup-ink); min-height: 44px; padding: 6px 8px; }
+.account-panel { border: 1px solid #b8c8a8; border-radius: 18px; padding: 24px; margin: 24px 0; background: #e7eed8; }
+.account-panel h2 { font-family: var(--cup-display); font-weight: 400; font-size: 26px; }
+.account-panel p { margin-top: 12px; line-height: 1.8; color: #5b704d; }
+.account-history { padding: 0; list-style: none; margin-top: 20px; }
+.account-history li { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 0; border-top: 1px solid #cbd3bc; font-size: 13px; }
+@media (max-width: 767px) { .login-card { grid-template-columns: 1fr; } .login-art { padding: 22px; align-items: center; } .login-art img { width: 170px; } .login-sticker { font-size: 16px; padding: 8px 16px; } .login-copy { padding: 26px 22px; } .login-copy h1 { font-size: 32px; } }

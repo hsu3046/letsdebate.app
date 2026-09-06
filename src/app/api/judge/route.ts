@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 /**
  * Judge API v4 - AI 심판 채점
@@ -23,7 +24,7 @@ interface JudgeRequestBody {
     players: JudgeInput[];
 }
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const { historyContext, players } = await request.json() as JudgeRequestBody;
@@ -141,3 +142,7 @@ function parseJudgeResponse(
         return null;
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

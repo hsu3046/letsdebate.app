@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 // Debate API Route - Multi-Provider AI Integration
 
@@ -20,7 +21,7 @@ import { getCharacterById } from '@/lib/characters';
 import type { Participant, Topic, Stance } from '@/lib/types';
 
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json();
@@ -170,3 +171,7 @@ export async function POST(request: NextRequest) {
         }), { status: 500 });
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;
