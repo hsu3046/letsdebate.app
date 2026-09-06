@@ -69,7 +69,7 @@ export default function UserAnalysis({
                         </div>
                     )}
 
-                    {/* 가장 많이 상호작용한 상대 */}
+                    {/* 가장 많이 언급한 상대 */}
                     {mostInteractedWith && (
                         <div className="flex items-center gap-3 p-3 bg-purple-50 rounded-xl">
                             <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
@@ -77,7 +77,7 @@ export default function UserAnalysis({
                             </div>
                             <div>
                                 <p className="text-sm font-medium text-text-primary">
-                                    가장 많이 상호작용한 상대
+                                    가장 많이 언급한 상대
                                 </p>
                                 <p className="text-xs text-text-secondary">
                                     {mostInteractedWith.name} ({mostInteractedWith.count}회 언급)

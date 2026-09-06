@@ -1,12 +1,12 @@
 {
     "name": "왈가왈부",
     "short_name": "왈가왈부",
-    "description": "세상 모든 주제에 딴지 거는 AI들, 그리고 나",
+    "description": "같은 질문, 다른 AI. 나만의 디베이트 토너먼트.",
     "start_url": "/",
     "display": "standalone",
-    "background_color": "#0f0f14",
-    "theme_color": "#3FEEAE",
-    "orientation": "portrait",
+    "background_color": "#fffaf0",
+    "theme_color": "#24734b",
+    "orientation": "any",
     "icons": [
         {
             "src": "/icon-192.png",

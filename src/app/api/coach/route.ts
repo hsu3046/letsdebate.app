@@ -1,14 +1,15 @@
+import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 /**
  * Coach API v4 - 실시간 전술 지령
- * BYOK: 클라이언트에서 apiKeys 수신
  */
 
-import { createProviders, MODELS, type ApiKeys } from '@/lib/ai/config';
+import { createProviders, MODELS } from '@/lib/ai/config';
 import { generateText } from 'ai';
 import { buildCoachSystemPrompt } from '@/lib/prompts/v4';
 import type { CoachOutput, TurnInfo } from '@/lib/prompts/v4';
 
 export async function POST(request: Request) {
+    if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const {
             playerModel,
@@ -19,7 +20,6 @@ export async function POST(request: Request) {
             phase,
             mode,
             turnInfo,
-            apiKeys
         } = await request.json() as {
             playerModel: string;
             playerRole: string;
@@ -29,7 +29,6 @@ export async function POST(request: Request) {
             phase: 'opening' | 'debate' | 'closing';
             mode: '1v1' | 'roundtable';
             turnInfo?: TurnInfo;
-            apiKeys?: ApiKeys;
         };
 
         if (!playerModel || !topic) {
@@ -39,7 +38,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const providers = createProviders(apiKeys || {});
+        const providers = createProviders();
 
         console.log('[Coach v4] Player:', playerModel, '| Role:', playerRole);
 
@@ -78,7 +77,7 @@ export async function POST(request: Request) {
         return Response.json(parsed);
 
     } catch (error) {
-        console.error('[Coach v4] Error:', error);
+        console.error('[Coach v4] Error:');
         return Response.json({
             target_weakness: 'Error occurred',
             tactical_instruction: 'Continue with your natural debate style',
@@ -103,8 +102,8 @@ function parseCoachResponse(text: string): CoachOutput | null {
             tactical_instruction: parsed.tactical_instruction,
             forbidden_keywords: parsed.forbidden_keywords || [],
         };
-    } catch (e) {
-        console.error('[Coach v4] Parse error:', e);
+    } catch {
+        console.error('[Coach v4] Parse error:');
         return null;
     }
 }

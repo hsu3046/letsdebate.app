@@ -11,6 +11,8 @@ import { validateTopic, validateContext } from '@/lib/inputValidation';
 import { RANDOM_TOPICS, getRandomTopic } from '@/lib/topics';
 import type { Topic } from '@/lib/types';
 import FadeInView from '@/components/FadeInView';
+import FlowSteps from '@/components/FlowSteps';
+import { useHydrated } from '@/hooks/useHydrated';
 
 function SetupContent() {
     const router = useRouter();
@@ -23,7 +25,7 @@ function SetupContent() {
     const [topic, setTopic] = useState(isNewDebate ? '' : (setup.topic || ''));
     const [context, setContext] = useState(isNewDebate ? '' : (setup.context || ''));
     // turnCount state 삭제: debateType에 따라 자동 결정됨
-    const [debateType, setDebateType] = useState<'vs' | 'roundtable'>('vs'); // 토론 종류
+    const [debateType, setDebateType] = useState<'vs' | 'roundtable'>(isNewDebate ? 'vs' : (setup.debateType || 'vs')); // 토론 종류
     const [showTopicAlert, setShowTopicAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
 
@@ -33,6 +35,7 @@ function SetupContent() {
         if (isNewDebate) {
             setSetup({
                 topic: '',
+                debateType: 'vs',
                 context: '',
                 turnCount: 8, // 기본값(VS모드 기준)
                 selectedCharacterIds: [],
@@ -46,6 +49,7 @@ function SetupContent() {
     const handleRandomTopic = () => {
         const randomTopic = getRandomTopic();
         setTopic(randomTopic.title);
+        setSetup({ topic: randomTopic.title });
     };
 
     // 🎯 토론 길이 자동 설정 (VS=8, Roundtable=15)
@@ -54,9 +58,9 @@ function SetupContent() {
 
     const handleNext = () => {
         // 1. Zod 검증 - 주제
-        const topicValidation = validateTopic(topic);
+        const topicValidation = validateTopic(topic.trim());
         if (!topicValidation.success) {
-            setAlertMessage(topicValidation.error || '주제를 입력해주세요.');
+            setAlertMessage(topicValidation.error || '주제를 입력해 주세요');
             setShowTopicAlert(true);
             return;
         }
@@ -64,7 +68,7 @@ function SetupContent() {
         // 2. Zod 검증 - 배경 설명
         const contextValidation = validateContext(context);
         if (!contextValidation.success) {
-            setAlertMessage(contextValidation.error || '배경 설명이 너무 깁니다.');
+            setAlertMessage(contextValidation.error || '배경 설명을 조금 줄여 주세요');
             setShowTopicAlert(true);
             return;
         }
@@ -72,7 +76,7 @@ function SetupContent() {
         // 3. 키워드 필터 - 주제
         const topicCheck = isContentAllowed(topicValidation.data!);
         if (!topicCheck.allowed) {
-            setAlertMessage(topicCheck.reason || '이 주제는 토론할 수 없습니다.');
+            setAlertMessage(topicCheck.reason || '이 주제로는 토론을 진행할 수 없어요');
             setShowTopicAlert(true);
             return;
         }
@@ -81,7 +85,7 @@ function SetupContent() {
         if (contextValidation.data) {
             const contextCheck = isContentAllowed(contextValidation.data);
             if (!contextCheck.allowed) {
-                setAlertMessage(contextCheck.reason || '이 배경 설명은 허용되지 않습니다.');
+                setAlertMessage(contextCheck.reason || '이 배경 설명으로는 토론을 진행할 수 없어요');
                 setShowTopicAlert(true);
                 return;
             }
@@ -99,8 +103,9 @@ function SetupContent() {
 
     return (
         <>
-            <section className="min-h-screen p-4 pt-16">
-                <div className="max-w-[420px] mx-auto pb-6">
+            <section className="legacy-page">
+                <div className="max-w-[760px] mx-auto pb-6">
+                    <FlowSteps current={1} />
                     {/* Header */}
                     <FadeInView delay={0.1}>
                         <div className="flex items-center mb-6 pt-2">
@@ -146,9 +151,9 @@ function SetupContent() {
                                 <textarea
                                     className="w-full min-h-[88px] p-4 bg-transparent border-none font-sans text-[0.9375rem] text-text-primary resize-y leading-relaxed placeholder:text-text-tertiary focus:outline-none"
                                     maxLength={200}
-                                    placeholder="토론하고 싶은 주제를 입력하세요..."
+                                    placeholder="토론하고 싶은 주제를 적어 주세요"
                                     value={topic}
-                                    onChange={(e) => setTopic(e.target.value)}
+                                    onChange={(e) => { setTopic(e.target.value); setSetup({ topic: e.target.value }); }}
                                 />
                                 <div className="flex justify-between items-center px-4 py-2 bg-bg-tertiary text-xs">
                                     <span></span>
@@ -194,7 +199,7 @@ function SetupContent() {
                             </label>
                             <div className="grid grid-cols-2 gap-3">
                                 <motion.button
-                                    onClick={() => setDebateType('vs')}
+                                    onClick={() => { setDebateType('vs'); setSetup({ debateType: 'vs' }); }}
                                     className={`p-4 rounded-xl border-2 transition-all ${debateType === 'vs'
                                         ? 'border-accent bg-accent/10'
                                         : 'border-gray-200 bg-white hover:border-gray-300'
@@ -206,12 +211,12 @@ function SetupContent() {
                                         <Swords size={28} className={debateType === 'vs' ? 'text-accent' : 'text-text-tertiary'} />
                                     </div>
                                     <div className={`font-semibold ${debateType === 'vs' ? 'text-accent' : 'text-text-primary'}`}>
-                                        VS 모드
+                                        1대1 토론
                                     </div>
-                                    <p className="text-xs text-text-tertiary mt-1">같은 질문, 다른 해석. AI 모델의 고유한 관점 차이를 1:1로 비교하세요.</p>
+                                    <p className="text-xs text-text-tertiary mt-1">같은 주제에 대한 두 AI의 관점을 비교해 보세요</p>
                                 </motion.button>
                                 <motion.button
-                                    onClick={() => setDebateType('roundtable')}
+                                    onClick={() => { setDebateType('roundtable'); setSetup({ debateType: 'roundtable' }); }}
                                     className={`p-4 rounded-xl border-2 transition-all ${debateType === 'roundtable'
                                         ? 'border-accent bg-accent/10'
                                         : 'border-gray-200 bg-white hover:border-gray-300'
@@ -225,7 +230,7 @@ function SetupContent() {
                                     <div className={`font-semibold ${debateType === 'roundtable' ? 'text-accent' : 'text-text-primary'}`}>
                                         라운드테이블
                                     </div>
-                                    <p className="text-xs text-text-tertiary mt-1">서로 다른 강점을 가진 AI 모델들이 함께 최상의 결론을 도출합니다.</p>
+                                    <p className="text-xs text-text-tertiary mt-1">여러 AI가 각자의 관점으로 주제를 함께 논의해요</p>
                                 </motion.button>
                             </div>
                         </div>
@@ -246,96 +251,7 @@ function SetupContent() {
                     </FadeInView>
 
                     {/* Footer - Help & Feedback */}
-                    <FadeInView delay={0.5}>
-                        <footer className="mt-8 pt-5 border-t border-gray-200">
-                            <div className="flex justify-center gap-3 mb-4">
-                                <motion.button
-                                    onClick={() => {
-                                        // 현재 입력값을 store에 저장하고 이동
-                                        setSetup({ topic: topic.trim(), context: context.trim(), turnCount: autoTurnCount });
-                                        router.push('/help');
-                                    }}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-text-secondary hover:border-accent transition-all"
-                                >
-                                    <HelpCircle size={16} />
-                                    소개글
-                                </motion.button>
-                                <motion.button
-                                    onClick={() => {
-                                        setSetup({ topic: topic.trim(), context: context.trim(), turnCount: autoTurnCount });
-                                        router.push('/notice');
-                                    }}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-text-secondary hover:border-accent transition-all"
-                                >
-                                    <Bell size={16} />
-                                    알림판
-                                </motion.button>
-                                <motion.button
-                                    onClick={() => {
-                                        // 현재 입력값을 store에 저장하고 이동
-                                        setSetup({ topic: topic.trim(), context: context.trim(), turnCount: autoTurnCount });
-                                        router.push('/feedback');
-                                    }}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-text-secondary hover:border-accent transition-all"
-                                >
-                                    <MessageSquare size={16} />
-                                    피드백
-                                </motion.button>
-                                <motion.button
-                                    onClick={() => {
-                                        setSetup({ topic: topic.trim(), context: context.trim(), turnCount: autoTurnCount });
-                                        router.push('/settings');
-                                    }}
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                    transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                                    className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-text-secondary hover:border-accent transition-all"
-                                >
-                                    <Settings size={16} />
-                                    설정
-                                </motion.button>
-                            </div>
 
-
-                            <p className="text-xs text-text-tertiary/80 text-center leading-relaxed mb-3">
-                                이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다.
-                            </p>
-                            <p className="text-[9px] text-text-tertiary/60 text-center leading-relaxed mb-2">
-                                본 서비스는 베타 테스트 중인 AI 시뮬레이션입니다. 생성된 콘텐츠는 사실과 다르거나 편향될 수 있으며,
-                                왈가왈부는 정보의 정확성이나 신뢰성을 보장하지 않습니다. 특히 법률, 의료, 금융 등 전문적인 조언으로
-                                활용하여 발생한 결과에 대해 서비스 제공자는 어떠한 법적 책임도 지지 않습니다.
-                            </p>
-                            <p className="text-[11px] text-text-secondary font-medium text-center mb-2">
-                                <Link href="/legal" className="hover:text-accent transition-colors underline underline-offset-2">이용약관</Link>
-                                {' | '}
-                                <Link href="/legal?tab=privacy" className="hover:text-accent transition-colors underline underline-offset-2">개인정보처리방침</Link>
-                            </p>
-                            {/* Powered by */}
-                            <div className="flex items-center justify-center gap-2 mt-[10px] mb-4">
-                                <span className="text-xs text-text-primary">Powered by</span>
-                                <div className="flex items-center gap-3 ml-1">
-                                    <img src="/logos/gemini.svg" alt="Gemini" className="h-6" />
-                                    <img src="/logos/anthropic.svg" alt="Claude" className="h-6" />
-                                    <img src="/logos/openai.svg" alt="OpenAI" className="h-6" />
-                                    <img src="/logos/xai.svg" alt="Grok" className="h-6" />
-                                    <img src="/DeepSeek_logo.svg" alt="DeepSeek" className="h-6" />
-                                </div>
-                            </div>
-
-                            <p className="text-[0.625rem] text-text-tertiary text-center opacity-70">
-                                © 2025 왈가왈부(WalGaWalBu) · v0.2.0
-                            </p>
-                        </footer>
-                    </FadeInView>
                 </div>
             </section>
 
@@ -368,7 +284,7 @@ function SetupContent() {
                                 <Edit3 size={28} className="text-accent" />
                             </div>
                             <h3 className="font-bold text-lg text-text-primary mb-3">
-                                먼저 토론 주제를 입력해주세요.
+                                먼저 토론 주제를 입력해 주세요
                             </h3>
                             <p className="text-sm text-text-secondary whitespace-pre-line mb-6">
                                 {alertMessage}
@@ -395,8 +311,11 @@ function SetupContent() {
 }
 
 export default function SetupPage() {
+    const hydrated = useHydrated();
+    // Initialize the editable draft only after the persisted browser setup is available.
+    if (!hydrated) return <section className="legacy-page" role="status">설정을 불러오는 중…</section>;
     return (
-        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">로딩 중...</div>}>
+        <Suspense fallback={<div className="min-h-screen flex items-center justify-center">불러오는 중…</div>}>
             <SetupContent />
         </Suspense>
     );

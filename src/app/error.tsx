@@ -34,7 +34,7 @@ export default function Error({
                     transition={{ delay: 0.2 }}
                     className="font-title text-2xl text-text-primary mb-2"
                 >
-                    앗, 문제가 발생했어요
+                    잠시 문제가 생겼어요
                 </motion.h1>
 
                 <motion.p
@@ -43,8 +43,8 @@ export default function Error({
                     transition={{ delay: 0.3 }}
                     className="text-text-secondary mb-8"
                 >
-                    예상치 못한 오류가 발생했습니다.
-                    <br />잠시 후 다시 시도해주세요.
+                    화면을 불러오지 못했어요
+                    <br />잠시 후 다시 시도해 주세요
                 </motion.p>
 
                 <motion.div
@@ -70,7 +70,7 @@ export default function Error({
                             
                         >
                             <Home size={18} />
-                            홈으로
+                            홈으로 돌아가기
                         </motion.button>
                     </Link>
                 </motion.div>

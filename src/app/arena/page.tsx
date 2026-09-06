@@ -8,7 +8,6 @@ import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Pause, Play, Square, X, Send, Edit3, Mic, Loader2, ChevronRight, BarChart3, Heart, Zap, ChevronUp, ChevronDown } from 'lucide-react';
 import { useDebateStore } from '@/store/debateStore';
-import { useApiKeyStore } from '@/store/apiKeyStore';
 import { useDebateAI } from '@/hooks/useDebateAI';
 import { PHASE_LABELS } from '@/lib/constants';
 import { getCharacterById } from '@/lib/characters';
@@ -116,8 +115,7 @@ export default function ArenaPage() {
     const [showDebugPanel, setShowDebugPanel] = useState(false);
 
     // 클라이언트 사이드 URL 파라미터 확인
-    // BYOK: API 키 스토어
-    const getApiKeys = useApiKeyStore((state) => state.getApiKeys);
+
 
     useEffect(() => {
         if (typeof window !== 'undefined') {
@@ -361,7 +359,7 @@ export default function ArenaPage() {
                 await new Promise(resolve => setTimeout(resolve, 500));
             }
 
-            let finalContent = '잠시만 기다려주세요...';  // 기본 fallback
+            let finalContent = '잠시만 기다려 주세요…';  // 기본 fallback
 
             try {
                 const participantInfo = setup.participants.map(p => ({
@@ -375,7 +373,6 @@ export default function ArenaPage() {
                     topic: setup.topic,
                     participants: participantInfo,
                     humanName: setup.humanName,
-                    apiKeys: getApiKeys(), // BYOK
                 };
 
                 // intro: 재토론 정보 추가
@@ -472,7 +469,6 @@ export default function ArenaPage() {
                             allParticipantIds: setup.participants.map(p => p.id),
                             openingSummary: openingSummaryRef.current.get(participant.id),
                             debateMode: setup.debateType || 'vs',
-                            apiKeys: getApiKeys(), // BYOK
                         }),
                     })
                         .then(res => res.ok ? res.text() : null)
@@ -699,7 +695,6 @@ export default function ArenaPage() {
                             participantId: participant.id,
                             participantName: participant.name,
                             content,
-                            apiKeys: getApiKeys(), // BYOK
                         }),
                     })
                         .then(res => res.json())
@@ -862,7 +857,7 @@ export default function ArenaPage() {
                     const response = await fetch('/api/judge', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ historyContext, players, apiKeys: getApiKeys() }),
+                        body: JSON.stringify({ historyContext, players }),
                     });
 
                     if (response.ok) {
@@ -961,7 +956,7 @@ export default function ArenaPage() {
 
     const handleHumanSubmit = () => {
         if (!humanInputText.trim()) {
-            alert('내용을 입력해주세요!');
+            alert('발언할 내용을 입력해 주세요');
             return;
         }
         const msg: DebateMessage = {
@@ -1218,7 +1213,7 @@ export default function ArenaPage() {
     const simplifiedPhases: DebatePhase[] = ['intro', 'opening', 'debate', 'summary'];
 
     return (
-        <div className="h-screen flex flex-col overflow-hidden">
+        <div className="h-dvh flex flex-col overflow-hidden">
             {/* 로딩 화면 - 토론 준비 중 */}
             <AnimatePresence>
                 {isPreparing && (
@@ -1287,7 +1282,7 @@ export default function ArenaPage() {
                 className="shrink-0 bg-bg-secondary border-b border-glass-border"
                 style={{ paddingTop: 'max(1rem, env(safe-area-inset-top, 1rem))' }}
             >
-                <div className="max-w-[420px] mx-auto p-3 pb-2">
+                <div className="max-w-[760px] mx-auto p-3 pb-2">
                     <p className="text-[0.625rem] font-medium text-text-tertiary uppercase tracking-wide">토론 주제</p>
                     <h2 className="text-base font-semibold text-text-primary mt-0.5 leading-snug">{setup.topic}</h2>
                 </div>
@@ -1305,7 +1300,7 @@ export default function ArenaPage() {
                             className="overflow-hidden"
                         >
                             {/* Progress Bar - Phase별 세그먼트 색상 구분 (3단계) */}
-                            <div className="max-w-[420px] mx-auto px-3 pt-2 pb-1">
+                            <div className="max-w-[760px] mx-auto px-3 pt-2 pb-1">
                                 <div className="h-[8px] bg-bg-tertiary rounded-full overflow-hidden flex">
                                     {/* 소개~오프닝 (30%) - 연한 보라 */}
                                     <div
@@ -1346,7 +1341,7 @@ export default function ArenaPage() {
 
                             {/* Participant Gauges - 유연 레이아웃 (인간 유저 포함) */}
                             {participantGauges.length > 0 && (
-                                <div className="max-w-[420px] mx-auto py-2 px-3">
+                                <div className="max-w-[760px] mx-auto py-2 px-3">
                                     <div className="flex gap-1.5">
                                         {participantGauges.map((p, i) => (
                                             <motion.div
@@ -1461,9 +1456,9 @@ export default function ArenaPage() {
                     </span>
                 )}
 
-                {/* 일시정지 중 표시 */}
+                {/* 일시 정지 중 표시 */}
                 {isPaused && !state.isFinished && (
-                    <span className="text-[10px] text-danger font-medium mt-0.5">일시정지 중</span>
+                    <span className="text-[10px] text-danger font-medium mt-0.5">일시 정지 중</span>
                 )}
 
 
@@ -1485,7 +1480,7 @@ export default function ArenaPage() {
                             key={msg.id}
                             id={`message-${msgIndex}`}
                             ref={(el) => { messageRefs.current[msgIndex] = el; }}
-                            className={`max-w-[420px] mx-auto mb-6 ${searchResults.includes(msgIndex) ? 'ring-2 ring-yellow-300/50 rounded-lg' : ''}`}
+                            className={`max-w-[760px] mx-auto mb-6 ${searchResults.includes(msgIndex) ? 'ring-2 ring-yellow-300/50 rounded-lg' : ''}`}
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.3 }}
@@ -1598,7 +1593,7 @@ export default function ArenaPage() {
                     const currentAuthorIndex = participantGauges.findIndex(p => p.name === currentStreamingAuthor);
                     const isModerator = currentStreamingAuthor === '사회자';
                     return (
-                        <div className="max-w-[420px] mx-auto mb-6 animate-fade-in">
+                        <div className="max-w-[760px] mx-auto mb-6 animate-fade-in">
                             <div className="flex items-center gap-2.5 mb-2">
                                 {/* 캐릭터 아이콘 - 사회자/참가자 분기 */}
                                 {isModerator ? (
@@ -1656,7 +1651,7 @@ export default function ArenaPage() {
                                                 />
                                             ))}
                                         </div>
-                                        <span className="text-sm text-text-tertiary">생각 중...</span>
+                                        <span className="text-sm text-text-tertiary">생각 중…</span>
                                     </div>
                                 )}
                             </div>
@@ -1681,11 +1676,11 @@ export default function ArenaPage() {
                             >
                                 <button
                                     onClick={() => setIsHumanInputCollapsed(false)}
-                                    className="w-full max-w-[420px] mx-auto flex items-center justify-between py-3 px-4 bg-accent/10 border border-accent/30 rounded-xl text-sm font-medium text-accent hover:bg-accent/20 transition-all"
+                                    className="w-full max-w-[760px] mx-auto flex items-center justify-between py-3 px-4 bg-accent/10 border border-accent/30 rounded-xl text-sm font-medium text-accent hover:bg-accent/20 transition-all"
                                 >
                                     <div className="flex items-center gap-2">
                                         <Edit3 size={16} />
-                                        <span>{setup.humanName || '나'}님 차례예요! 탭하여 입력</span>
+                                        <span>{setup.humanName || '나'}님 차례예요 · 눌러서 발언하기</span>
                                     </div>
                                     <ChevronUp size={18} />
                                 </button>
@@ -1698,13 +1693,13 @@ export default function ArenaPage() {
                                 exit={{ height: 0, opacity: 0 }}
                                 className="p-4"
                             >
-                                <div className="max-w-[420px] mx-auto">
+                                <div className="max-w-[760px] mx-auto">
                                     <div className="flex items-center justify-between mb-2">
                                         <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
                                             <Edit3 size={16} className="text-accent" />
                                             <span>{setup.humanName || '나'}님의 발언</span>
                                             {showPassError && (
-                                                <span className="text-xs text-red-500 font-normal ml-1">오프닝 토크는 패스할 수 없습니다</span>
+                                                <span className="text-xs text-red-500 font-normal ml-1">첫 발언은 건너뛸 수 없어요</span>
                                             )}
                                         </div>
                                         <button
@@ -1717,7 +1712,7 @@ export default function ArenaPage() {
                                     <textarea
                                         value={humanInputText}
                                         onChange={(e) => setHumanInputText(e.target.value)}
-                                        placeholder="의견을 입력하세요..."
+                                        placeholder="의견을 입력해 주세요"
                                         maxLength={500}
                                         className="w-full min-h-[80px] p-3 bg-bg-tertiary border border-glass-border rounded-lg text-sm text-text-primary resize-none focus:outline-none focus:border-accent mb-2"
                                     />
@@ -1736,7 +1731,7 @@ export default function ArenaPage() {
                                                 : 'bg-gray-200 hover:bg-gray-300 text-text-secondary'
                                                 }`}
                                         >
-                                            패스
+                                            건너뛰기
                                         </button>
                                         <button
                                             onClick={handleHumanSubmit}
@@ -1767,7 +1762,7 @@ export default function ArenaPage() {
                         }}
                     />
                     <div className="shrink-0 bg-bg-secondary border-t border-glass-border relative z-50">
-                        <div className="max-w-[420px] mx-auto p-4">
+                        <div className="max-w-[760px] mx-auto p-4">
                             <div className="flex items-center gap-2 mb-2">
                                 <Search size={16} className="text-accent" />
                                 <span className="text-sm font-semibold text-text-primary">토론 내용 검색</span>
@@ -1813,7 +1808,7 @@ export default function ArenaPage() {
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                    placeholder="검색어를 입력하세요..."
+                                    placeholder="검색어를 입력해 주세요"
                                     className="flex-1 px-3 py-2 bg-bg-tertiary border border-glass-border rounded-lg text-sm text-text-primary focus:outline-none focus:border-accent"
                                     autoFocus
                                 />
@@ -1832,7 +1827,7 @@ export default function ArenaPage() {
             {/* Moderator Panel */}
             {showModeratorPanel && (
                 <div className="shrink-0 p-4 bg-bg-secondary border-t border-glass-border">
-                    <div className="max-w-[420px] mx-auto">
+                    <div className="max-w-[760px] mx-auto">
                         <div className="flex items-center justify-between mb-3">
                             <div className="flex items-center gap-2 text-sm font-semibold text-text-primary">
                                 <Mic size={16} className="text-accent" /> 사회자 개입
@@ -1862,7 +1857,7 @@ export default function ArenaPage() {
 
             {/* Controls */}
             <div className="shrink-0 p-4 bg-bg-secondary border-t border-glass-border">
-                <div className="max-w-[420px] mx-auto">
+                <div className="max-w-[760px] mx-auto">
                     {!state.isFinished ? (
                         <div className="flex gap-2">
                             <motion.button
@@ -1967,7 +1962,7 @@ export default function ArenaPage() {
                             onClick={(e) => e.stopPropagation()}
                         >
                             <h3 className="text-lg font-bold text-text-primary mb-2 text-center">토론 종료</h3>
-                            <p className="text-sm text-text-secondary mb-6 text-center">토론을 종료하시겠습니까?</p>
+                            <p className="text-sm text-text-secondary mb-6 text-center">토론을 마칠까요?</p>
                             <div className="flex gap-3">
                                 <button onClick={cancelStop} className="flex-1 py-3 glass rounded-xl text-sm font-semibold text-text-secondary">계속하기</button>
                                 <button onClick={confirmStop} className="flex-1 py-3 bg-danger rounded-xl text-sm font-semibold text-white">종료하기</button>
@@ -2005,7 +2000,7 @@ export default function ArenaPage() {
                             />
                         </div>
                         <div className="h-20 flex flex-col items-center justify-center max-w-[80%] text-center mt-6">
-                            <h3 className="text-lg font-bold text-text-primary mb-3">AI 심판이 채점 중입니다...</h3>
+                            <h3 className="text-lg font-bold text-text-primary mb-3">AI 심판이 토론을 평가하고 있어요…</h3>
                             <AnimatePresence mode="wait">
                                 <motion.p
                                     key={loadingTip}

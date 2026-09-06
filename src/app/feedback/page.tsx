@@ -47,7 +47,7 @@ export default function FeedbackPage() {
         e.preventDefault();
 
         if (!message.trim()) {
-            alert('피드백 내용을 입력해주세요!');
+            alert('보내실 의견을 입력해 주세요');
             return;
         }
 
@@ -84,17 +84,17 @@ export default function FeedbackPage() {
 
     if (submitStatus === 'success') {
         return (
-            <section className="min-h-screen p-4 pt-16 animate-fade-in">
-                <div className="max-w-[420px] mx-auto pb-6 text-center">
+            <section className="legacy-page">
+                <div className="max-w-[760px] mx-auto pb-6 text-center">
                     <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-success/10 flex items-center justify-center">
                         <CheckCircle size={40} className="text-success" />
                     </div>
                     <h1 className="font-title text-2xl text-text-primary mb-3">
-                        감사합니다!
+                        의견을 보내 주셔서 고마워요
                     </h1>
                     <p className="text-sm text-text-secondary mb-8">
-                        소중한 피드백이 전송되었습니다.<br />
-                        더 나은 서비스로 보답하겠습니다.
+                        보내 주신 의견이 잘 도착했어요<br />
+                        더 편하고 즐거운 토론을 만드는 데 참고할게요
                     </p>
                     <motion.button
                         onClick={() => router.push('/')}
@@ -111,8 +111,8 @@ export default function FeedbackPage() {
     }
 
     return (
-        <section className="min-h-screen p-4 pt-16 animate-fade-in">
-            <div className="max-w-[420px] mx-auto pb-6">
+        <section className="legacy-page animate-fade-in">
+            <div className="max-w-[760px] mx-auto pb-6">
                 {/* Header */}
                 <div className="flex items-center mb-6 pt-2">
                     <motion.button
@@ -124,7 +124,7 @@ export default function FeedbackPage() {
                     >
                         <ArrowLeft size={18} />
                     </motion.button>
-                    <h2 className="flex-1 text-center font-title text-3xl">피드백 보내기</h2>
+                    <h2 className="flex-1 text-center font-title text-3xl">의견 보내기</h2>
                     <div className="w-10" />
                 </div>
 
@@ -132,11 +132,11 @@ export default function FeedbackPage() {
                 <div className="glass rounded-lg p-4 mb-6">
                     <div className="flex items-center gap-2 text-sm font-semibold text-text-primary mb-2">
                         <MessageSquare size={18} className="text-accent" />
-                        여러분의 의견을 듣고 싶어요!
+                        여러분의 의견을 듣고 싶어요
                     </div>
                     <p className="text-sm text-text-secondary">
-                        왈가왈부를 더 좋게 만들기 위해 여러분의 피드백이 필요합니다.
-                        버그 리포트, 기능 제안, 사용 후기 등 무엇이든 환영합니다.
+                        불편했던 점이나 바라는 기능을 알려 주세요.
+                        왈가왈부를 사용한 소감도 좋아요.
                     </p>
                 </div>
 
@@ -181,7 +181,7 @@ export default function FeedbackPage() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="회신을 원하시면 이메일을 입력하세요"
+                            placeholder="답변을 받을 이메일을 입력해 주세요"
                             className="w-full p-3 glass rounded-lg text-[0.9375rem] text-text-primary placeholder:text-text-tertiary focus:outline-none focus:border-accent transition-colors"
                         />
                     </div>
@@ -190,13 +190,13 @@ export default function FeedbackPage() {
                     <div className="mb-6">
                         <label className="flex items-center gap-2 text-sm font-semibold mb-2.5 text-text-primary">
                             <MessageSquare size={16} className="text-accent" />
-                            피드백 내용
+                            보내실 의견
                             <span className="text-[0.6875rem] font-medium text-danger">필수</span>
                         </label>
                         <textarea
                             value={message}
                             onChange={(e) => setMessage(e.target.value)}
-                            placeholder="버그 리포트, 기능 제안, 사용 후기 등..."
+                            placeholder="오류 제보나 기능 제안 등 자유롭게 적어 주세요"
                             maxLength={1000}
                             className="w-full min-h-[160px] p-3 glass rounded-lg text-[0.9375rem] text-text-primary placeholder:text-text-tertiary resize-y focus:outline-none focus:border-accent transition-colors"
                         />
@@ -209,7 +209,7 @@ export default function FeedbackPage() {
                     {submitStatus === 'error' && (
                         <div className="flex items-center gap-2 p-3 mb-4 bg-danger/10 border border-danger/20 rounded-lg text-sm text-danger">
                             <AlertCircle size={18} />
-                            전송에 실패했습니다. 다시 시도해주세요.
+                            의견을 보내지 못했어요. 잠시 후 다시 시도해 주세요.
                         </div>
                     )}
 
@@ -223,46 +223,18 @@ export default function FeedbackPage() {
                         transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                     >
                         {isSubmitting ? (
-                            <>전송 중...</>
+                            <>보내는 중…</>
                         ) : (
                             <>
                                 <Send size={18} />
-                                피드백 보내기
+                                의견 보내기
                             </>
                         )}
                     </motion.button>
                 </form>
 
                 {/* Footer */}
-                <footer className="mt-6 pt-5 border-t border-gray-200 text-center">
-                    <p className="text-xs text-text-tertiary/80 leading-relaxed mb-3">
-                        이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다.
-                    </p>
-                    <p className="text-[9px] text-text-tertiary/60 leading-relaxed mb-2">
-                        본 서비스는 베타 테스트 중인 AI 시뮬레이션입니다. 생성된 콘텐츠는 사실과 다르거나 편향될 수 있으며,
-                        왈가왈부는 정보의 정확성이나 신뢰성을 보장하지 않습니다. 특히 법률, 의료, 금융 등 전문적인 조언으로
-                        활용하여 발생한 결과에 대해 서비스 제공자는 어떠한 법적 책임도 지지 않습니다.
-                    </p>
-                    <p className="text-[11px] text-text-secondary font-medium mb-2">
-                        <Link href="/legal" className="hover:text-accent transition-colors underline underline-offset-2">이용약관</Link>
-                        {' | '}
-                        <Link href="/legal?tab=privacy" className="hover:text-accent transition-colors underline underline-offset-2">개인정보처리방침</Link>
-                    </p>
-                    {/* Powered by */}
-                    <div className="flex items-center justify-center gap-2 mt-[10px] mb-4">
-                        <span className="text-xs text-text-primary">Powered by</span>
-                        <div className="flex items-center gap-3 ml-1">
-                            <img src="/logos/gemini.svg" alt="Gemini" className="h-6" />
-                            <img src="/logos/anthropic.svg" alt="Claude" className="h-6" />
-                            <img src="/logos/openai.svg" alt="OpenAI" className="h-6" />
-                            <img src="/logos/xai.svg" alt="Grok" className="h-6" />
-                            <img src="/DeepSeek_logo.svg" alt="DeepSeek" className="h-6" />
-                        </div>
-                    </div>
-                    <p className="text-[0.625rem] text-text-tertiary opacity-70">
-                        © 2025 왈가왈부(WalGaWalBu) · v0.2.0
-                    </p>
-                </footer>
+
             </div>
         </section>
     );

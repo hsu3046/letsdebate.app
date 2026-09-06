@@ -1,9 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_KR, Do_Hyeon, Jua, Gowun_Dodum } from "next/font/google";
+import { Jua, Noto_Sans_KR } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import ClientLayout from "@/components/ClientLayout";
 import "./globals.css";
+import "@/styles/experience.css";
+import "@/styles/championship.css";
+
+const jua = Jua({ variable: "--font-jua", subsets: ["latin"], weight: "400", display: "swap" });
 
 const notoSansKr = Noto_Sans_KR({
   variable: "--font-noto-sans-kr",
@@ -11,30 +15,12 @@ const notoSansKr = Noto_Sans_KR({
   weight: ["400", "500", "600", "700"],
 });
 
-const doHyeon = Do_Hyeon({
-  variable: "--font-do-hyeon",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const jua = Jua({
-  variable: "--font-jua",
-  subsets: ["latin"],
-  weight: "400",
-});
-
-const gowunDodum = Gowun_Dodum({
-  variable: "--font-gowun-dodum",
-  subsets: ["latin"],
-  weight: "400",
-});
-
 // Pretendard & RIDIBatang CDN (Google Fonts에 없어서 CDN 사용)
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || 'https://letsdebate.app'),
-  title: "왈가왈부 - AI와 함께하는 토론 플랫폼",
-  description: "세상 모든 주제에 딴지 거는 AI들, 그리고 나. 다양한 관점에서 토론하고 새로운 시각을 발견하세요.",
+  title: "왈가왈부 - AI 모델들의 토론 배틀",
+  description: "GPT·Claude·Gemini 등 다양한 AI 모델이 같은 주제로 맞붙는 1대1 토론 배틀. 4강·8강 토너먼트를 만들고 AI들의 주장과 반박을 지켜보세요.",
   keywords: ["토론", "AI", "debate", "왈가왈부", "AI토론", "관점", "discussion"],
   authors: [{ name: "WalGaWalBu Team" }],
   creator: "WalGaWalBu",
@@ -54,8 +40,8 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     siteName: "왈가왈부",
-    title: "왈가왈부 - AI와 함께하는 토론 플랫폼",
-    description: "세상 모든 주제에 딴지 거는 AI들, 그리고 나. 다양한 관점에서 토론하고 새로운 시각을 발견하세요.",
+    title: "왈가왈부 - AI 모델들의 토론 배틀",
+    description: "GPT·Claude·Gemini 등 다양한 AI 모델이 같은 주제로 맞붙는 1대1 토론 배틀. 4강·8강 토너먼트를 만들고 AI들의 주장과 반박을 지켜보세요.",
     images: [
       {
         url: "/og-image.png",
@@ -67,8 +53,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "왈가왈부 - AI와 함께하는 토론 플랫폼",
-    description: "세상 모든 주제에 딴지 거는 AI들, 그리고 나.",
+    title: "왈가왈부 - AI 모델들의 토론 배틀",
+    description: "여러 AI 모델이 주장과 반박으로 우승을 겨루는 토론 배틀",
     images: ["/og-image.png"],
   },
   icons: {
@@ -76,7 +62,7 @@ export const metadata: Metadata = {
       { url: "/logo_light.svg", type: "image/svg+xml" },
     ],
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180" },
+      { url: "/icon-192.png", sizes: "180x180" },
     ],
   },
   manifest: "/manifest.json",
@@ -93,11 +79,9 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f0f14" },
+    { media: "(prefers-color-scheme: light)", color: "#fffaf0" },
+    { media: "(prefers-color-scheme: dark)", color: "#fffaf0" },
   ],
 };
 
@@ -119,7 +103,7 @@ export default function RootLayout({
           href="https://cdn.jsdelivr.net/gh/niceplugin/ridibatang@1.0.0/dist/ridibatang.css"
         />
       </head>
-      <body className={`${notoSansKr.variable} ${doHyeon.variable} ${jua.variable} ${gowunDodum.variable} antialiased`}>
+      <body className={`${notoSansKr.variable} ${jua.variable} antialiased`}>
         <ThemeProvider>
           <ClientLayout>{children}</ClientLayout>
         </ThemeProvider>

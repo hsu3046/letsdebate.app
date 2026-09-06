@@ -227,26 +227,26 @@ export default function ReportPage() {
     <div class="container">
         <h1>${icons.messageCircle} ${setup.topic}</h1>
         <p class="subtitle">${dateStr} · ${setup.participants.length + (setup.humanParticipation ? 1 : 0)}명 참여 · ${state.messages.length}개 발언</p>
-        
-        
+
+
         <div class="participants">
             <h2>${icons.users} 참가자</h2>
             <div class="participant-list">
                 ${participantsHtml}
-                
+
             </div>
         </div>
-        
+
         <div class="summary">
             <h2>${icons.clipboardList} 사회자 정리</h2>
             <p>${formattedSummary}</p>
         </div>
-        
+
         <h2 class="section-title">${icons.messagesSquare} 토론 기록</h2>
         <div class="messages">
             ${messagesHtml}
         </div>
-        
+
         <footer>
             <p class="footer-main">왈가왈부 - AI 토론 시뮬레이터</p>
             <p class="footer-disclaimer">본 서비스는 베타 테스트 중인 AI 시뮬레이션입니다. 생성된 콘텐츠는 사실과 다르거나 편향될 수 있으며, 왈가왈부는 정보의 정확성이나 신뢰성을 보장하지 않습니다. 특히 법률, 의료, 금융 등 전문적인 조언으로 활용하여 발생한 결과에 대해 서비스 제공자는 어떠한 법적 책임도 지지 않습니다.</p>
@@ -291,17 +291,17 @@ export default function ReportPage() {
         } else {
             try {
                 await navigator.clipboard.writeText(`${shareText}\n${shareUrl}`);
-                alert('공유 내용이 클립보드에 복사되었습니다!');
+                alert('공유할 내용을 복사했어요');
             } catch {
-                alert('공유하기를 지원하지 않는 브라우저입니다.');
+                alert('이 브라우저에서는 공유 기능을 사용할 수 없어요');
             }
         }
     };
 
     return (
         <>
-            <section className="min-h-screen overflow-y-auto p-4 pt-3 pb-20">
-                <div className="max-w-[420px] mx-auto pb-6">
+            <section className="legacy-page">
+                <div className="max-w-[760px] mx-auto pb-6">
                     {/* 뒤로가기 버튼 */}
                     <motion.button
                         onClick={() => router.push('/stats')}
@@ -325,10 +325,10 @@ export default function ReportPage() {
                             <Sparkles size={32} className="text-white" />
                         </motion.div>
                         <h1 className="font-title text-2xl text-text-primary mb-1">
-                            사회자 종합 정리
+                            토론 핵심 정리
                         </h1>
                         <p className="text-sm text-text-secondary">
-                            오늘의 토론을 AI 사회자가 정리해 드립니다.
+                            AI 사회자가 정리한 핵심 쟁점과 결론을 확인해 보세요
                         </p>
                     </FadeInView>
 
@@ -363,13 +363,13 @@ export default function ReportPage() {
                                 <Share2 size={16} /> 공유하기
                             </motion.button>
                             <motion.button
-                                onClick={isLoadingAI ? () => alert('요약 생성 중입니다. 잠시만 기다려주세요!') : handleDownload}
+                                onClick={isLoadingAI ? () => alert('토론을 요약하고 있어요. 잠시만 기다려 주세요.') : handleDownload}
                                 className={`flex items-center justify-center gap-2 py-3 glass rounded-xl text-sm font-medium ${isLoadingAI ? 'text-gray-400 cursor-not-allowed opacity-50' : 'text-text-secondary'}`}
                                 whileHover={!isLoadingAI ? { scale: 1.03 } : {}}
                                 whileTap={!isLoadingAI ? { scale: 0.97 } : {}}
                                 transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                             >
-                                <Download size={16} /> {isLoadingAI ? '생성 중...' : '다운로드'}
+                                <Download size={16} /> {isLoadingAI ? '요약하는 중…' : '다운로드'}
                             </motion.button>
                         </div>
                         <div className="grid grid-cols-2 gap-2 mb-4">
@@ -380,7 +380,7 @@ export default function ReportPage() {
                                 whileTap={{ scale: 0.97 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                             >
-                                <RefreshCw size={16} /> 재토론
+                                <RefreshCw size={16} /> 다시 토론하기
                             </motion.button>
                             <motion.button
                                 onClick={() => { resetState(); resetSetup(); router.push('/'); }}
@@ -405,41 +405,13 @@ export default function ReportPage() {
                                 whileTap={{ scale: 0.95 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                             >
-                                <MessageSquare size={14} /> 피드백 보내기
+                                <MessageSquare size={14} /> 의견 보내기
                             </motion.button>
                         </div>
                     </FadeInView>
 
                     {/* Footer */}
-                    <FadeInView delay={0.6}>
-                        <footer className="mt-8 pt-6 px-4 border-t border-glass-border text-center">
-                            <p className="text-[0.6875rem] text-text-tertiary leading-relaxed mb-2">
-                                이곳의 토론은 정답이 아닌, 다양한 가능성을 탐구하는 과정입니다.
-                            </p>
-                            <p className="text-[10px] text-text-tertiary/60 leading-relaxed max-w-[320px] mx-auto mb-2">
-                                본 서비스는 베타 테스트 중인 AI 시뮬레이션입니다. 생성된 콘텐츠는 사실과 다르거나 편향될 수 있으며,
-                                왈가왈부는 정보의 정확성이나 신뢰성을 보장하지 않습니다.
-                            </p>
-                            <p className="text-[11px] text-text-secondary font-medium mb-3">
-                                <Link href="/legal" className="hover:text-accent transition-colors underline underline-offset-2">이용약관</Link>
-                                {' | '}
-                                <Link href="/legal?tab=privacy" className="hover:text-accent transition-colors underline underline-offset-2">개인정보처리방침</Link>
-                            </p>
-                            <div className="flex items-center justify-center gap-2 mb-3">
-                                <span className="text-xs text-text-primary">Powered by</span>
-                                <div className="flex items-center gap-3 ml-1">
-                                    <img src="/logos/gemini.svg" alt="Gemini" className="h-6" />
-                                    <img src="/logos/anthropic.svg" alt="Claude" className="h-6" />
-                                    <img src="/logos/openai.svg" alt="OpenAI" className="h-6" />
-                                    <img src="/logos/xai.svg" alt="Grok" className="h-6" />
-                                    <img src="/DeepSeek_logo.svg" alt="DeepSeek" className="h-6" />
-                                </div>
-                            </div>
-                            <p className="text-[0.625rem] text-text-tertiary opacity-70">
-                                © 2025 왈가왈부(WalGaWalBu) · v0.2.0
-                            </p>
-                        </footer>
-                    </FadeInView>
+
                 </div>
             </section>
 
@@ -464,10 +436,10 @@ export default function ReportPage() {
                                 <div className="w-12 h-12 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-3">
                                     <RefreshCw size={24} className="text-accent" />
                                 </div>
-                                <h3 className="text-lg font-bold text-text-primary mb-2">재토론 하시겠습니까?</h3>
+                                <h3 className="text-lg font-bold text-text-primary mb-2">같은 주제로 다시 토론할까요?</h3>
                                 <p className="text-sm text-text-tertiary">
-                                    같은 주제와 참가자로 새로운 토론을 시작합니다.
-                                    <br />이전 토론의 결론을 일부분 반영합니다.
+                                    같은 주제와 참가자로 새 토론을 시작해요
+                                    <br />이전 토론의 결론도 일부 반영해요
                                 </p>
                             </div>
                             <div className="flex gap-3">
@@ -492,7 +464,7 @@ export default function ReportPage() {
                                     className="flex-1 py-3 rounded-xl text-sm font-medium text-white bg-accent hover:bg-accent/90 transition-colors"
                                     whileTap={{ scale: 0.98 }}
                                 >
-                                    재토론 시작
+                                    다시 토론 시작
                                 </motion.button>
                             </div>
                         </motion.div>

@@ -23,7 +23,7 @@ export default function NotFound() {
                     transition={{ delay: 0.2 }}
                     className="font-title text-2xl text-text-primary mb-2"
                 >
-                    페이지를 찾을 수 없습니다
+                    페이지를 찾을 수 없어요
                 </motion.h1>
 
                 <motion.p
@@ -32,7 +32,7 @@ export default function NotFound() {
                     transition={{ delay: 0.3 }}
                     className="text-text-secondary mb-8"
                 >
-                    요청하신 페이지가 존재하지 않거나 이동되었을 수 있습니다.
+                    주소가 바뀌었거나 더 이상 제공하지 않는 페이지예요
                 </motion.p>
 
                 <motion.div
@@ -48,7 +48,7 @@ export default function NotFound() {
                             
                         >
                             <Home size={18} />
-                            홈으로
+                            홈으로 돌아가기
                         </motion.button>
                     </Link>
 
@@ -59,7 +59,7 @@ export default function NotFound() {
                         
                     >
                         <ArrowLeft size={18} />
-                        뒤로가기
+                        뒤로 가기
                     </motion.button>
                 </motion.div>
             </div>

@@ -32,15 +32,27 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
 
-# docs (internal)
-/docs/
+# Internal docs stay local; maintained project guides are versioned.
+/docs/*
+!/docs/ARCHITECTURE.md
+!/docs/API.md
+!/docs/DECISIONS.md
+!/docs/SETUP.md
+!/docs/design-system.md
+!/docs/VERIFICATION.md
 /@docs/
 
 # typescript
 *.tsbuildinfo
 next-env.d.ts
 .git_backup/
+
+# Local agent notes and exported asset bundles are not source files.
+/.Codex/
+/assets/characters/*.zip
+/assets/characters/*/preview.png

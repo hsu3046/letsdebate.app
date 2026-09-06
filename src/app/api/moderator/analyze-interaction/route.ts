@@ -1,9 +1,9 @@
-// 사회자 AI 기반 Interaction 분석 API (BYOK)
+import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 // Phase 3: 백그라운드에서 맥락 기반 정밀 분석
 
 import { NextRequest, NextResponse } from 'next/server';
 import { streamText } from 'ai';
-import { createProviders, MODELS, type ApiKeys } from '@/lib/ai/config';
+import { createProviders, MODELS } from '@/lib/ai/config';
 
 interface AnalyzeInteractionRequest {
     messageId: string;
@@ -13,7 +13,6 @@ interface AnalyzeInteractionRequest {
     previousMessages: { author: string; content: string }[];
     participantIds: string[];
     participantNames: { id: string; name: string }[];
-    apiKeys?: ApiKeys;
 }
 
 interface AnalyzeInteractionResponse {
@@ -26,16 +25,15 @@ interface AnalyzeInteractionResponse {
 }
 
 export async function POST(request: NextRequest) {
+    if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json() as AnalyzeInteractionRequest;
-        const { messageId, content, author, authorId, previousMessages, participantIds, participantNames, apiKeys } = body;
+        const { messageId, content, author, authorId, previousMessages, participantIds, participantNames } = body;
 
         if (!messageId || !content || !author) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
-
-        const keys = apiKeys || {};
-        const providers = createProviders(keys);
+        const providers = createProviders();
 
         // 참가자 목록 (발언자 제외)
         const otherParticipants = participantNames.filter(p => p.id !== authorId);
@@ -113,7 +111,7 @@ ${participantList || '(없음)'}
         }
 
     } catch (error) {
-        console.error('[Moderator Analyze] Error:', error);
+        console.error('[Moderator Analyze] Error:');
         return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
     }
 }

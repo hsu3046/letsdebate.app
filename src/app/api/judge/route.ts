@@ -1,9 +1,9 @@
+import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 /**
  * Judge API v4 - AI 심판 채점
- * BYOK: 클라이언트에서 apiKeys 수신
  */
 
-import { createProviders, MODELS, type ApiKeys } from '@/lib/ai/config';
+import { createProviders, MODELS } from '@/lib/ai/config';
 import { generateText } from 'ai';
 import {
     buildBatchJudgePrompt,
@@ -21,12 +21,12 @@ import type {
 interface JudgeRequestBody {
     historyContext: string;
     players: JudgeInput[];
-    apiKeys?: ApiKeys;
 }
 
 export async function POST(request: Request) {
+    if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
-        const { historyContext, players, apiKeys } = await request.json() as JudgeRequestBody;
+        const { historyContext, players } = await request.json() as JudgeRequestBody;
 
         if (!historyContext || !players || players.length < 2) {
             return Response.json(
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
             );
         }
 
-        const providers = createProviders(apiKeys || {});
+        const providers = createProviders();
 
         console.log('[Judge v4] Evaluating', players.length, 'participants');
 
@@ -78,7 +78,7 @@ export async function POST(request: Request) {
         return Response.json(response);
 
     } catch (error) {
-        console.error('[Judge v4] Error:', error);
+        console.error('[Judge v4] Error:');
         return Response.json(
             { error: 'Judge API failed' },
             { status: 500 }
@@ -136,8 +136,8 @@ function parseJudgeResponse(
         });
 
         return results;
-    } catch (e) {
-        console.error('[Judge v4] Parse error:', e);
+    } catch {
+        console.error('[Judge v4] Parse error:');
         return null;
     }
 }

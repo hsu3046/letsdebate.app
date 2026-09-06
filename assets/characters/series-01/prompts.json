@@ -1,0 +1,149 @@
+{
+  "tool": "built-in image_gen",
+  "sourceReference": "public/avatars/avatar_victor.jpeg",
+  "basePrompt": "Use case: stylized-concept. Asset type: ONE production-ready square character portrait for an AI debate sports collectible card, exactly 1024x1024, full-bleed illustration only.\nInput image is a visual identity reference. Redesign its yellow robot into a fresh character in the same family, preserving the large glossy sunflower-yellow circular robot face, simple black expressive eyes and mouth, pink cheek marks, visible over-ear headphones, little antenna, small friendly articulated robot hands, thick clean dark forest-green ink contours, warm playful 2D comic cel shading. Simplify the existing detailed illustration into polished designer mascot art, not 3D, not photorealism.\nComposition: one character only, centered waist-up bust, head taking about 45% of image width, face center near x=50%,y=37%; antenna fully visible with comfortable top margin, both hands visible inside frame. Overall figure fills 80% height. Same face-to-body proportions and framing throughout this card collection. Plain casual unbranded leisurewear only. Background a single pale flat color and exactly one or at most two large simple flat geometric shapes. Flat soft grounding shadow only; no realistic environment. Character personality through distinct facial expression, pose, headset silhouette and color.\nNo profession or job cues, no suits, ties, lab coats, uniforms, work tools, tablets, computers, documents, office/court/classroom/scenery, microphones, weapons. No text, letters, names, logos, badges, numbers, speech bubbles, watermarks, card border, extra panels or multiple characters. No elaborate texture, tiny mechanical greebles or busy patterns.\nSpecific character design: ",
+  "characters": [
+    {
+      "slug": "01-lumi",
+      "name": "루미",
+      "trait": "먼저 손 내미는 자신감",
+      "color": "#efa085",
+      "direction": "Upbeat confident welcoming personality. Coral red headphones with round earcups and coral oversized crewneck sweatshirt with ivory ribbed cuffs. A single short antenna with a round red tip. Friendly wide U-shaped smile, dark round eyes, small rosy cheeks. One hand casually on hip and the other open palm inviting a conversation. Soft pale peach background with one flat cream circle."
+    },
+    {
+      "slug": "02-pick",
+      "name": "픽",
+      "trait": "그 말은 조금 다른데?",
+      "color": "#b4d7a4",
+      "direction": "Skeptical curious personality. Mint green angular earcups, dark forest-green pullover hoodie without drawstrings. A single antenna bending slightly sideways with a mint cube tip. One eyebrow raised, small lopsided closed-mouth smile. One chunky robot hand touching chin, other arm folded. Pale sage background with one flat off-white rounded diamond."
+    },
+    {
+      "slug": "03-momo",
+      "name": "모모",
+      "trait": "궁금한 건 못 참아",
+      "color": "#c9b7e8",
+      "direction": "Inquisitive wide-eyed personality. Lavender oversized circular headphones, lilac sleeveless vest over cream long sleeves. Short antenna with a lavender oval tip. Head tilts 12 degrees, eyes very wide black dots and small open round mouth, one hand raised with index finger tentatively asking. Pale lavender background with a single flat ivory arch."
+    },
+    {
+      "slug": "04-spark",
+      "name": "스파크",
+      "trait": "반박은 짧고 강하게",
+      "color": "#e78563",
+      "direction": "Bold spirited quick-rebuttal personality. Burnt-orange compact headphones with small bolt-shaped earpad accents, simple burnt-orange short-sleeved sports tee with cream side panels and no insignia. Small zigzag antenna and round tip. Determined playful eyebrows, confident grin. One fist planted into the opposite open palm at chest level, energetic but friendly. Pale apricot background with a single broad flat cream diagonal stripe."
+    },
+    {
+      "slug": "05-nuri",
+      "name": "누리",
+      "trait": "천천히 들어볼게",
+      "color": "#a8cfe0",
+      "direction": "Patient calm listener. Powder blue soft rounded headphones, cream zip-up casual jacket with sky-blue sleeves. Thin upright antenna with blue round tip. Peaceful crescent eyes and small relaxed smile. Both hands held gently open, palms lowered in a calming gesture. Pale blue background with one flat off-white horizontal oval."
+    },
+    {
+      "slug": "06-dodo",
+      "name": "도도",
+      "trait": "내 생각은 조금 달라",
+      "color": "#b99bd9",
+      "direction": "Cool self-assured contrarian. Deep plum chunky oval headphones, plum and ivory simple color-block crewneck. Single straight antenna with a plum diamond-shaped tip. Half-lidded black eyes, one slightly raised brow, knowing smirk. Arms loosely crossed, chin slightly tilted up. Pale mauve background with one cream flat rounded square."
+    },
+    {
+      "slug": "07-tori",
+      "name": "토리",
+      "trait": "우리 생각을 이어보자",
+      "color": "#efb591",
+      "direction": "Warm sociable connector personality. Tangerine-soft peach headphones with a tiny cream scalloped edge, apricot cardigan worn open over a cream t-shirt, no buttons with text. Short antenna with peach round tip. Happy closed crescent eyes and soft U smile, small blush. Friendly single hand wave, other hand near heart. Pale peach background with one ivory oval shape."
+    },
+    {
+      "slug": "08-loop",
+      "name": "루프",
+      "trait": "한 번 더 생각해보면",
+      "color": "#79b8ab",
+      "direction": "Reflective deliberate thinker. Teal ring-shaped earcups, teal high-collar soft casual sweatshirt. A smooth curled antenna ending in a tiny round teal tip. Thoughtful downward glancing eyes, small neutral smile. Right thumb under chin, left hand supports elbow, head gently inclined. Pale seafoam background with a single flat ivory incomplete circular arc."
+    },
+    {
+      "slug": "09-kong",
+      "name": "콩",
+      "trait": "작은 목소리 큰 한마디",
+      "color": "#c0cf92",
+      "direction": "Shy but quietly brave personality. Small pistachio green padded headphones, oversized pistachio sweatshirt with long cream cuffs partially covering hands. Very short antenna with tiny pea-green round tip. Tiny black dot eyes, rosy cheeks, modest little smile. Hands gently clasped in front near chest, shoulders slightly tucked, body forward-facing. Pale pistachio background with one big ivory circle."
+    },
+    {
+      "slug": "10-pado",
+      "name": "파도",
+      "trait": "분위기를 바꾸는 한 수",
+      "color": "#85afe0",
+      "direction": "Relaxed breezy improviser. Cobalt blue slim sport headphones with a wave-like earcup outline, cobalt and ivory casual zip jacket with a loose hood resting behind neck. Short antenna with blue teardrop tip. One eye winks, easy broad smile. One open hand casually gesturing sideways as if offering a fresh alternative. Pale sky-blue background with one simple ivory wave shape."
+    },
+    {
+      "slug": "11-neo",
+      "name": "네오",
+      "trait": "차근차근 따져보자",
+      "color": "#9cb6c4",
+      "direction": "Orderly precise personality without an occupation. Slate blue squared headphones and small thin rounded-square glasses over the yellow face, simple slate-blue sweatshirt with one cream chest panel. Short straight antenna with a small square tip. Focused friendly eyes and slight smile. One hand counting on two clearly separated fingers, other hand open beneath. Pale blue-gray background with one flat cream grid of just four large rounded squares."
+    },
+    {
+      "slug": "12-popo",
+      "name": "포포",
+      "trait": "재미있게 받아칠게",
+      "color": "#e9abc4",
+      "direction": "Cheeky playful personality. Bubblegum-pink oversized headphones with asymmetric small round decorative beads, cream sweatshirt with pink sleeves. Springy antenna with pink round tip. One eye winking, cheeky toothless grin and rosy cheeks. One hand making a clear two-finger peace sign beside face, other on hip. Pale blush-pink background with one ivory semicircle."
+    },
+    {
+      "slug": "13-bambi",
+      "name": "밤비",
+      "trait": "말수는 적어도 또렷하게",
+      "color": "#a9afd2",
+      "direction": "Quiet observant soft-spoken personality. Dusty periwinkle soft oval headphones partially nestled in a loose periwinkle hood, cream plain sweatshirt underneath. Short antenna peeking from hood with moon-like oval tip. Small attentive black eyes slightly looking sideways, tiny closed smile. Hands calmly folded at waist, shoulders relaxed. Pale dusk-lavender background with one flat ivory crescent shape."
+    },
+    {
+      "slug": "14-chacha",
+      "name": "차차",
+      "trait": "말문을 여는 에너지",
+      "color": "#f2b35f",
+      "direction": "Exuberant expressive joyful personality. Bright tangerine broad circular earcups, tangerine casual raglan shirt with cream shoulders. Upright antenna with big orange sphere tip. Laughing crescent eyes and broad simple open mouth, rosy cheeks. Both hands spread outward mid-explanation, elbows bent, dynamic conversational energy. Pale warm butter background with one flat ivory sunburst of only six broad rays."
+    },
+    {
+      "slug": "15-yuni",
+      "name": "유니",
+      "trait": "상상 밖의 관점",
+      "color": "#c2b9ea",
+      "direction": "Dreamy imaginative personality. Lilac headphones with one small simple star-shaped decoration on the left earcup, soft lilac and cream pullover with round collar. Gently curved antenna topped by a small lilac star. Eyes gazing upward thoughtfully, small wonder-filled smile. One hand open upward as though presenting an imaginary idea, other relaxed near waist. Pale lavender background with one large off-white four-point star."
+    },
+    {
+      "slug": "16-tango",
+      "name": "탱고",
+      "trait": "승부욕도 귀엽게",
+      "color": "#d78f87",
+      "direction": "Competitive tenacious but endearing personality. Brick-red headphones, a simple ivory sport headband across the top third of yellow forehead without logos, brick-red short-sleeved sport tee with ivory trim. Single short straight antenna with red sphere. Determined inward eyebrows with friendly grin. Both small fists held up near ribs in a ready-to-debate stance, not fighting or punching. Pale warm terracotta background with one ivory chevron."
+    },
+    {
+      "slug": "17-jelly",
+      "name": "젤리",
+      "trait": "생각은 유연하게",
+      "color": "#c5d781",
+      "direction": "Adaptable spontaneous personality. Lime green soft oval headphones of two slightly different sizes, cream casual hoodie with lime green shoulders. Wavy flexible antenna with lime round tip. Curious sideways glance and playful small asymmetrical smile. Head tilts opposite torso, one open hand curved upward and other downward in a balanced conversational gesture. Pale lime background with one ivory organic rounded blob."
+    },
+    {
+      "slug": "18-sol",
+      "name": "솔",
+      "trait": "흔들려도 내 페이스",
+      "color": "#c8b56c",
+      "direction": "Steady grounded resilient personality. Muted mustard headphones with forest-green pads, plain cream casual track jacket with mustard shoulders and forest-green cuffs. Sturdy short antenna with mustard oval tip. Calm confident black eyes, straight eyebrows, warm closed smile. One hand resting firmly over heart and the other relaxed at hip, upright stable stance. Pale warm sand background with one flat ivory rounded rectangle."
+    },
+    {
+      "slug": "19-miro",
+      "name": "미로",
+      "trait": "숨은 연결을 찾아서",
+      "color": "#8daac2",
+      "direction": "Puzzling investigative curiosity with NO profession. Navy slim headphones, tiny round cream-rim glasses, navy and cream striped casual sweatshirt with only two broad stripes. Antenna with a tiny navy loop tip. One raised eyebrow, eyes looking thoughtfully to upper side, mild delighted smirk. One index finger rests lightly at side of head, other arm relaxed. Pale mist blue background with one flat ivory right-angle maze-like line of just three bends."
+    },
+    {
+      "slug": "20-bibi",
+      "name": "비비",
+      "trait": "웃으며 던지는 반전",
+      "color": "#d39abc",
+      "direction": "Witty mischievous quick-minded personality. Berry-magenta headphones with cream oval inner earcups, berry casual loose crewneck with cream collar. Small antenna leaning to one side with berry heart-shaped tip. Bright black eyes, one eyebrow arched, a gentle sly smile and two blush dots. One palm raised in a tiny shrug, other hand on hip, slight body tilt. Pale dusty pink background with one simple flat ivory off-center circle."
+    }
+  ],
+  "variantStyleReference": "public/characters/series-01/01-lumi.png",
+  "variantInstructions": "Match the exact simplified linework, yellow face identity, rendering finish and relative head scale of the attached new-series reference. Change expression, pose, antenna, headphones, clothing and background as specified. One distinct character only."
+}

@@ -1,0 +1,165 @@
+{
+  "series": "왈가왈부 캐릭터 카드 01",
+  "characters": [
+    {
+      "id": "01-lumi",
+      "name": "루미",
+      "number": "01",
+      "tagline": "먼저 손 내미는 자신감",
+      "color": "#efa085",
+      "image": "/characters/series-01/01-lumi.png"
+    },
+    {
+      "id": "02-pick",
+      "name": "픽",
+      "number": "02",
+      "tagline": "그 말은 조금 다른데?",
+      "color": "#b4d7a4",
+      "image": "/characters/series-01/02-pick.png"
+    },
+    {
+      "id": "03-momo",
+      "name": "모모",
+      "number": "03",
+      "tagline": "궁금한 건 못 참아",
+      "color": "#c9b7e8",
+      "image": "/characters/series-01/03-momo.png"
+    },
+    {
+      "id": "04-spark",
+      "name": "스파크",
+      "number": "04",
+      "tagline": "반박은 짧고 강하게",
+      "color": "#e78563",
+      "image": "/characters/series-01/04-spark.png"
+    },
+    {
+      "id": "05-nuri",
+      "name": "누리",
+      "number": "05",
+      "tagline": "천천히 들어볼게",
+      "color": "#a8cfe0",
+      "image": "/characters/series-01/05-nuri.png"
+    },
+    {
+      "id": "06-dodo",
+      "name": "도도",
+      "number": "06",
+      "tagline": "내 생각은 조금 달라",
+      "color": "#b99bd9",
+      "image": "/characters/series-01/06-dodo.png"
+    },
+    {
+      "id": "07-tori",
+      "name": "토리",
+      "number": "07",
+      "tagline": "우리 생각을 이어보자",
+      "color": "#efb591",
+      "image": "/characters/series-01/07-tori.png"
+    },
+    {
+      "id": "08-loop",
+      "name": "루프",
+      "number": "08",
+      "tagline": "한 번 더 생각해보면",
+      "color": "#79b8ab",
+      "image": "/characters/series-01/08-loop.png"
+    },
+    {
+      "id": "09-kong",
+      "name": "콩",
+      "number": "09",
+      "tagline": "작은 목소리 큰 한마디",
+      "color": "#c0cf92",
+      "image": "/characters/series-01/09-kong.png"
+    },
+    {
+      "id": "10-pado",
+      "name": "파도",
+      "number": "10",
+      "tagline": "분위기를 바꾸는 한 수",
+      "color": "#85afe0",
+      "image": "/characters/series-01/10-pado.png"
+    },
+    {
+      "id": "11-neo",
+      "name": "네오",
+      "number": "11",
+      "tagline": "차근차근 따져보자",
+      "color": "#9cb6c4",
+      "image": "/characters/series-01/11-neo.png"
+    },
+    {
+      "id": "12-popo",
+      "name": "포포",
+      "number": "12",
+      "tagline": "재미있게 받아칠게",
+      "color": "#e9abc4",
+      "image": "/characters/series-01/12-popo.png"
+    },
+    {
+      "id": "13-bambi",
+      "name": "밤비",
+      "number": "13",
+      "tagline": "말수는 적어도 또렷하게",
+      "color": "#a9afd2",
+      "image": "/characters/series-01/13-bambi.png"
+    },
+    {
+      "id": "14-chacha",
+      "name": "차차",
+      "number": "14",
+      "tagline": "말문을 여는 에너지",
+      "color": "#f2b35f",
+      "image": "/characters/series-01/14-chacha.png"
+    },
+    {
+      "id": "15-yuni",
+      "name": "유니",
+      "number": "15",
+      "tagline": "상상 밖의 관점",
+      "color": "#c2b9ea",
+      "image": "/characters/series-01/15-yuni.png"
+    },
+    {
+      "id": "16-tango",
+      "name": "탱고",
+      "number": "16",
+      "tagline": "승부욕도 귀엽게",
+      "color": "#d78f87",
+      "image": "/characters/series-01/16-tango.png"
+    },
+    {
+      "id": "17-jelly",
+      "name": "젤리",
+      "number": "17",
+      "tagline": "생각은 유연하게",
+      "color": "#c5d781",
+      "image": "/characters/series-01/17-jelly.png"
+    },
+    {
+      "id": "18-sol",
+      "name": "솔",
+      "number": "18",
+      "tagline": "흔들려도 내 페이스",
+      "color": "#c8b56c",
+      "image": "/characters/series-01/18-sol.png"
+    },
+    {
+      "id": "19-miro",
+      "name": "미로",
+      "number": "19",
+      "tagline": "숨은 연결을 찾아서",
+      "color": "#8daac2",
+      "image": "/characters/series-01/19-miro.png"
+    },
+    {
+      "id": "20-bibi",
+      "name": "비비",
+      "number": "20",
+      "tagline": "웃으며 던지는 반전",
+      "color": "#d39abc",
+      "image": "/characters/series-01/20-bibi.png"
+    }
+  ]
+}

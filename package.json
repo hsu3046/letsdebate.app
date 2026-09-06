@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test tests/tournament.test.mjs",
+    "test:ui": "node tests/ui-smoke.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.55",
