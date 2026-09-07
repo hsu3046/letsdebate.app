@@ -84,7 +84,10 @@ export function getRoundName(round: number, size: number) {
 }
 
 export function modelShortName(model: OpenRouterModel) {
-    return model.name.replace(/^[^:]+:\s*/, '');
+    const name = model.name.replace(/^[^:]+:\s*/, '');
+    if (name === 'DeepSeek V4 Pro 0813') return 'DeepSeek V4 Pro';
+    if (/^Hy4 preview$/i.test(name)) return 'Hy4';
+    return name;
 }
 
 export function getProvider(modelId: string) { return modelId.split('/')[0]; }

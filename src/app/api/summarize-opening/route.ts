@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 /**
  */
@@ -11,7 +12,7 @@ interface SummarizeRequest {
     content: string;
 }
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const { participantId, participantName, content } = await request.json() as SummarizeRequest;
@@ -42,3 +43,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ summary: '', error: true });
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

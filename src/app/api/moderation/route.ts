@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 /**
  * OpenAI Moderation API - 콘텐츠 안전성 검사
  */
@@ -16,7 +17,7 @@ interface ModerationResponse {
     results: ModerationResult[];
 }
 
-export async function POST(req: NextRequest) {
+async function handlePost(req: NextRequest) {
     try {
         const { input } = await req.json() as {
             input: string;
@@ -83,3 +84,7 @@ export async function POST(req: NextRequest) {
         });
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

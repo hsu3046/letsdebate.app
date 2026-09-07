@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 // Moderator API Route - AI-Generated Moderator Messages
 
@@ -80,7 +81,7 @@ const MODERATOR_PROMPTS: Record<ModeratorMessageType, (req: ModeratorRequest) =>
 };
 
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json() as ModeratorRequest;
@@ -136,3 +137,7 @@ function getFallbackMessage(
 
     return templates[type];
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

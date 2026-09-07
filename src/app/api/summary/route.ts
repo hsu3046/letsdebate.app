@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 import { NextRequest } from 'next/server';
 import { streamText } from 'ai';
@@ -6,7 +7,7 @@ import { getSummaryPrompt } from '@/lib/prompts/v4';
 import { createProviders, MODELS } from '@/lib/ai/config';
 import type { Participant } from '@/lib/types';
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json();
@@ -45,3 +46,7 @@ export async function POST(request: NextRequest) {
         return new Response(JSON.stringify({ error: 'Failed to generate summary' }), { status: 500 });
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

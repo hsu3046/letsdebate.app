@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 /**
  * Director API v4 - 토론 전략 생성
@@ -10,7 +11,7 @@ import { generateText } from 'ai';
 import { buildDirectorSystemPrompt } from '@/lib/prompts/v4';
 import type { DirectorOutput } from '@/lib/prompts/v4';
 
-export async function POST(request: Request) {
+async function handlePost(request: Request) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const { topic, participants, mode = '1v1' } = await request.json() as {
@@ -148,3 +149,7 @@ function parseDirectorResponse(
         return null;
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

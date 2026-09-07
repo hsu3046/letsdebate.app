@@ -1,3 +1,4 @@
+import { withAIRequest } from '@/lib/ai/access/guard';
 import { AI_SERVICE_UNAVAILABLE, isAIServiceConfigured } from '@/lib/ai/service';
 import { NextRequest, NextResponse } from 'next/server';
 import { generateText } from 'ai';
@@ -11,7 +12,7 @@ interface AnalyzeRequest {
     existingSummary?: string;
 }
 
-export async function POST(request: NextRequest) {
+async function handlePost(request: NextRequest) {
     if (!isAIServiceConfigured()) return Response.json({ error: AI_SERVICE_UNAVAILABLE }, { status: 503 });
     try {
         const body = await request.json() as AnalyzeRequest;
@@ -58,3 +59,7 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Analysis failed' }, { status: 500 });
     }
 }
+
+export const POST = withAIRequest('assist', handlePost);
+
+export const maxDuration = 300;

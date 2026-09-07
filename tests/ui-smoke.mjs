@@ -1,13 +1,14 @@
 /* Requires an existing Playwright runtime and a running local app. No live AI calls are made. */
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { loadTS } from './helpers.mjs';
 import { createRequire } from 'node:module';
 const runtimeRequire = createRequire(import.meta.url);
 const { chromium } = runtimeRequire('playwright');
 const baseURL = process.env.TEST_BASE_URL || 'http://127.0.0.1:3000';
 const output = process.env.TEST_OUTPUT_DIR || '/tmp/letsdebate-qa';
-const fixtureProviders = ['anthropic', 'openai', 'google', 'x-ai', 'deepseek', 'qwen', 'mistralai', 'meta-llama', 'qa'];
-const models = Array.from({ length: 9 }, (_, index) => ({ id: `${fixtureProviders[index]}/qa-model-${index}`, name: `QA: Model ${String.fromCharCode(65 + index)}`, contextLength: 64000, promptPrice: 0.0000001, completionPrice: 0.0000002 }));
+const { PLAYERS } = loadTS('src/lib/players.ts');
+const models = PLAYERS.map((player, index) => ({ id: player.id, name: `QA: Model ${String.fromCharCode(65 + index)}`, contextLength: 64000, promptPrice: 0.0000001, completionPrice: 0.0000002 }));
 const verdict = { winner: 'a', scores: { a: 86, b: 78 }, reason: 'A는 구체적인 사례와 반박을 연결했습니다. B는 전제에 대한 설명이 필요합니다.', highlights: { a: '명료한 논증이 돋보였습니다.', b: '반대 관점을 새롭게 제시했습니다.' } };
 const frame = event => `data: ${JSON.stringify(event)}\n\n`;
 const transcript = ['a', 'b', 'b', 'a'].map((side, index) => ({ type: 'message', id: `msg-${index}`, side, round: Math.floor(index / 2) + 1, content: `테스트 발언 ${index + 1}: AI와 예술에 대한 구체적인 논거입니다.` }));
@@ -19,6 +20,7 @@ const transcript = ['a', 'b', 'b', 'a'].map((side, index) => ({ type: 'message',
   const page = await context.newPage();
   const errors = [];
   page.on('pageerror', error => errors.push(`${page.url()}\n${error.message}`));
+  await page.route('**/api/auth/session', route => route.fulfill({ json: { configured: true, user: { id: 'qa-user', name: '테스트 팬' } } }));
   await page.route('**/api/models', route => route.fulfill({ json: { models } }));
   let mode = 'complete';
   let calls = 0;

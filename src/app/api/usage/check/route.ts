@@ -1,33 +1,13 @@
-// 사용량 조회 API
-import { NextRequest, NextResponse } from 'next/server';
-import { getServerRemainingUsage, DAILY_LIMIT } from '@/lib/usageLimitServer';
+import { authJSON, getVerifiedUser } from '@/lib/auth/server';
+import { getAccountUsage } from '@/lib/ai/access/account';
+import { isSameOrigin } from '@/lib/auth/policy';
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
+    if (!isSameOrigin(request)) return authJSON({ error: '요청한 페이지를 확인해 주세요.' }, 403);
     try {
-        const { visitorId } = await request.json();
-
-        if (!visitorId) {
-            return NextResponse.json(
-                { error: 'visitorId is required' },
-                { status: 400 }
-            );
-        }
-
-        const remaining = await getServerRemainingUsage(visitorId);
-
-        return NextResponse.json({
-            remaining,
-            limit: DAILY_LIMIT,
-            success: true,
-        });
-    } catch (error) {
-        console.error('Usage check error:', error);
-        // 에러 시 기본값 반환 (graceful degradation)
-        return NextResponse.json({
-            remaining: DAILY_LIMIT,
-            limit: DAILY_LIMIT,
-            success: true,
-            fallback: true,
-        });
-    }
+        const user = await getVerifiedUser();
+        if (!user) return authJSON({ error: '로그인 후 이용할 수 있어요.', success: false }, 401);
+        const usage = await getAccountUsage(user.id);
+        return authJSON({ ...usage.assist, resetAt: usage.resetAt, success: true });
+    } catch { return authJSON({ error: '이용 한도를 확인하지 못했어요.', success: false }, 503); }
 }
