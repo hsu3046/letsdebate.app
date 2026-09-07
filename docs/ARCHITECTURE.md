@@ -59,3 +59,7 @@ API 키는 서버 환경변수 `OPENROUTER_API_KEY`로만 관리한다. 클라�
 ## 기존 기능
 
 `/setup → /participants → /arena → /stats → /report`는 기존 캐릭터 토론이며 서버의 OpenRouter 연결을 공유한다. 도움말에서 접근할 수 있다. 주제·형식 복원, 중복 시작 방지, 반응형 폭, 공통 UI를 보강했다. 과거 프롬프트·캐릭터 관련 문서는 이 기존 엔진의 참고 자료다.
+
+## 대표 선수 컬렉션
+
+`/characters → /tournament/new?players=…`는 15개 AI 중 최대 8명을 선택하는 진입점이다. `src/lib/players.ts`에 ID·캐릭터·국가·날짜가 있는 참고 능력치를 모으며 `PlayerCollection`과 `PlayerRadar`가 표시한다. `useModelCatalog`는 서버가 반환한 현재 허용 모델과 15명 명단의 교집합을 반환한다. URL의 IDs는 초기화 때만 읽고 현재 카탈로그로 메타데이터를 해석하므로 응답이 늦게 와도 작성 중 입력을 덮지 않는다. 조회 실패·현재 미제공 모델은 대진 생성 자격을 주지 않는다. 기존 저장 대진과 독립 캐릭터 엔진은 그대로 읽을 수 있다.

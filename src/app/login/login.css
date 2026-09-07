@@ -11,7 +11,7 @@
 .login-perks > span { display: flex; align-items: center; gap: 10px; }
 .google-login { width: 100%; min-height: 52px; color: #233c30; background: #fff; border: 1.5px solid #b9c7ab; }
 .google-g { font: 800 22px Arial, sans-serif; color: #4285f4; }
-.login-copy .login-legal { font-size: 11px; margin: 20px 0; }
+.login-copy .login-legal { font-size: var(--type-caption); margin: 20px 0; }
 .login-legal a { text-decoration: underline; text-underline-offset: 3px; }
 .login-copy .inline-alert { margin-top: 20px; }
 .account-link.compact { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; color: var(--cup-ink); min-height: 44px; padding: 6px 8px; }

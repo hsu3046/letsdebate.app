@@ -305,12 +305,12 @@ function ParticipantsContent() {
                                         <div className="flex justify-center mb-4">
                                             <img
                                                 src={
-                                                    currentCharacter.aiModel === 'Gemini' ? '/logos/gemini.svg' :
+                                                    currentCharacter.aiModel === 'Gemini' ? '/logos/gemini.png' :
                                                         currentCharacter.aiModel === 'Claude' ? '/logos/anthropic.svg' :
                                                             currentCharacter.aiModel === 'ChatGPT' ? '/logos/openai.svg' :
                                                                 currentCharacter.aiModel === 'Grok' ? '/logos/xai.svg' :
                                                                     currentCharacter.aiModel === 'DeepSeek' ? '/DeepSeek_logo.svg' :
-                                                                        '/logos/gemini.svg'
+                                                                        '/logos/gemini.png'
                                                 }
                                                 alt={currentCharacter.aiModel}
                                                 className="h-6"

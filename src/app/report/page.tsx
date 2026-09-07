@@ -250,7 +250,7 @@ export default function ReportPage() {
         <footer>
             <p class="footer-main">왈가왈부 - AI 토론 시뮬레이터</p>
             <p class="footer-disclaimer">본 서비스는 베타 테스트 중인 AI 시뮬레이션입니다. 생성된 콘텐츠는 사실과 다르거나 편향될 수 있으며, 왈가왈부는 정보의 정확성이나 신뢰성을 보장하지 않습니다. 특히 법률, 의료, 금융 등 전문적인 조언으로 활용하여 발생한 결과에 대해 서비스 제공자는 어떠한 법적 책임도 지지 않습니다.</p>
-            <p class="footer-copyright">© 2025 왈가왈부(WalGaWalBu). All rights reserved.</p>
+            <p class="footer-copyright">© 2025 왈가왈부(Let's Debate AI). All rights reserved.</p>
         </footer>
     </div>
 </body>
