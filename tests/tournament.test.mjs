@@ -61,15 +61,19 @@ function mockRoute({ fail, invalidJudge = false, configured = true, allowedModel
   const route = loadTS('src/app/api/tournament/match/route.ts', {
     '@/lib/ai/access/guard': { withAIRequest: (_kind, handler) => handler },
     './access/context': { executionContext: { getStore: () => ({ signal: new AbortController().signal, usage: [], failed: false }) } },
-    '@ai-sdk/openai': { createOpenAI: options => {
+    '@ai-sdk/openai-compatible': { createOpenAICompatible: options => {
       assert.equal(options.baseURL, 'https://openrouter.ai/api/v1');
       assert.equal(options.apiKey, 'server-fixture-not-a-real-key');
-      return { chat: model => { calledModels.push(model); return model; } };
+      assert.equal(options.includeUsage, true);
+      // fetch() rejects non-Latin-1 header values; a Hangul title once broke every AI call.
+      for (const value of Object.values(options.headers)) assert.match(value, /^[\x20-\x7e]+$/);
+      return { chatModel: model => { calledModels.push(model); return model; } };
     } },
     ai: {
       streamText: options => {
         assert.equal(options.maxRetries, 0);
-        return { textStream: (async function* () { if (fail) throw fail; yield '서로 다른 '; yield '관점입니다.'; })(), finishReason: Promise.resolve('stop') };
+        // Like the AI SDK: upstream errors go to onError and the text stream simply ends.
+        return { textStream: (async function* () { if (fail) { options.onError({ error: fail }); return; } yield '서로 다른 '; yield '관점입니다.'; })(), finishReason: Promise.resolve('stop') };
       },
       generateText: async options => { assert.ok(!options.prompt.includes('test/model-')); return { text: invalidJudge ? '{bad-json}' : JSON.stringify(verdict) }; },
     },
@@ -161,9 +165,9 @@ test('기존 캐릭터 엔진도 서버 OpenRouter 키로만 연결한다', () =
   const { createProviders, MODELS } = loadTS('src/lib/ai/config.ts', {
     '@/lib/ai/access/guard': { withAIRequest: (_kind, handler) => handler },
     './access/context': { executionContext: { getStore: () => ({ signal: new AbortController().signal, usage: [], failed: false }) } },
-    '@ai-sdk/openai': { createOpenAI: options => {
+    '@ai-sdk/openai-compatible': { createOpenAICompatible: options => {
       assert.equal(options.apiKey, 'server-fixture');
-      return { chat: id => { calls.push(id); return id; } };
+      return { chatModel: id => { calls.push(id); return id; } };
     } },
   }, { OPENROUTER_API_KEY: 'server-fixture' });
   const providers = createProviders({ OPENROUTER_API_KEY: 'ignored-client-key' });

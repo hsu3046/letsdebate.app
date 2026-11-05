@@ -56,3 +56,6 @@ next-env.d.ts
 /.Codex/
 /assets/characters/*.zip
 /assets/characters/*/preview.png
+
+# full-stack e2e screenshots
+/test-results/

@@ -10,13 +10,15 @@
     "test": "node --test tests/*.test.mjs",
     "test:ui": "node tests/ui-smoke.mjs",
     "test:auth-ui": "node tests/auth-ui.mjs",
-    "test:players-ui": "node tests/players-ui.mjs"
+    "test:players-ui": "node tests/players-ui.mjs",
+    "test:e2e": "node tests/e2e/tournament-e2e.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.55",
     "@ai-sdk/deepseek": "^1.0.32",
     "@ai-sdk/google": "^2.0.45",
     "@ai-sdk/openai": "^2.0.84",
+    "@ai-sdk/openai-compatible": "^1.0.61",
     "@ai-sdk/xai": "^2.0.40",
     "@fingerprintjs/fingerprintjs": "^5.0.1",
     "@react-three/drei": "^10.7.7",
