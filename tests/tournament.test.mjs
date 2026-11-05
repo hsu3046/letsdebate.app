@@ -217,6 +217,8 @@ test('심판이 설명·코드 블록·문자열 점수를 섞어도 판정만 �
   assert.throws(() => parseVerdict(JSON.stringify({ ...raw, reason: '' })));
   assert.throws(() => parseVerdict(JSON.stringify({ ...raw, winner: 'a' })));
   assert.throws(() => parseVerdict(JSON.stringify({ ...raw, winner: 'c' })));
+  assert.throws(() => parseVerdict(JSON.stringify({ ...raw, scores: { a: null, b: 80 } })), 'null is not a score of 0');
+  assert.throws(() => parseVerdict(JSON.stringify({ ...raw, scores: { a: '', b: 80 } })));
 });
 
 test('기존 캐릭터 엔진의 모델은 권장 제공 모델 목록 안에 있다', () => {

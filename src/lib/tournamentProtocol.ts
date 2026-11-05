@@ -9,9 +9,10 @@ export const verdictSchema = z.object({
 
 // Judges are other LLMs: they often wrap JSON in prose or a code fence, send numbers as
 // strings or use upper-case sides. Normalise those, but never invent a missing field.
+const looseScore = z.union([z.number(), z.string().trim().regex(/^\d{1,3}(?:\.\d+)?$/).transform(Number)]);
 const looseVerdictSchema = z.object({
     winner: z.string().trim().toLowerCase().pipe(z.enum(['a', 'b'])),
-    scores: z.object({ a: z.coerce.number(), b: z.coerce.number() }),
+    scores: z.object({ a: looseScore, b: looseScore }),
     reason: z.string().trim(),
     highlights: z.object({ a: z.string().trim(), b: z.string().trim() }),
 });
