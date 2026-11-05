@@ -32,6 +32,11 @@ export const OPENROUTER_ATTRIBUTION_HEADERS = {
     'X-OpenRouter-Title': 'WalGaWalBu',
 } as const;
 
+// Debate speeches are short. Reasoning models (DeepSeek V4 Pro, Kimi, Grok…) otherwise spend
+// the output-token budget and the per-speech timeout thinking before the first visible word.
+// OpenRouter normalises this across providers and ignores it for non-reasoning models.
+export const OPENROUTER_MATCH_OPTIONS = { openrouter: { reasoning: { effort: 'low', exclude: true } } };
+
 export function createServiceProvider() {
     const apiKey = process.env.OPENROUTER_API_KEY?.trim();
     const context = executionContext.getStore();

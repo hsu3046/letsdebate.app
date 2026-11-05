@@ -91,6 +91,7 @@ export async function startFakeBackend({ port = 0, catalogPath } = {}) {
     const codes = new Map();   // auth code -> code_challenge
     const tokens = new Set();  // valid access tokens
     const log = [];            // every upstream AI request, for assertions
+    const judgeAttempts = new Map();
     const state = { chatDelayMs: 8 };
 
     const server = http.createServer(async (request, response) => {
@@ -236,7 +237,7 @@ export async function startFakeBackend({ port = 0, catalogPath } = {}) {
         const user = body.messages.filter(message => message.role === 'user').map(message => typeof message.content === 'string' ? message.content : message.content.map(part => part.text).join('')).join('\n');
         const isJudge = system.includes('심판');
         const generationId = `gen-${randomUUID()}`;
-        log.push({ id: generationId, model: body.model, stream: !!body.stream, judge: isJudge, roles: body.messages.map(message => message.role), max_tokens: body.max_tokens ?? null, max_completion_tokens: body.max_completion_tokens ?? null, temperature: body.temperature ?? null, include_usage: body.stream_options?.include_usage ?? null, at: Date.now() });
+        log.push({ id: generationId, model: body.model, stream: !!body.stream, judge: isJudge, roles: body.messages.map(message => message.role), max_tokens: body.max_tokens ?? null, max_completion_tokens: body.max_completion_tokens ?? null, temperature: body.temperature ?? null, include_usage: body.stream_options?.include_usage ?? null, reasoning: body.reasoning ?? null, at: Date.now() });
         const usage = { prompt_tokens: Math.ceil((system.length + user.length) / 2), completion_tokens: 180, total_tokens: 0, cost: 0.00042 };
 
         if (user.includes('[[fail-429]]') && !isJudge) return send(response, 429, { error: { message: 'Rate limit exceeded', code: 429 } });
@@ -245,7 +246,13 @@ export async function startFakeBackend({ port = 0, catalogPath } = {}) {
         if (isJudge) {
             const verdict = verdictFor(user, body.model);
             content = user.includes('[[bad-judge]]') ? '판정: A가 더 설득력 있었습니다.' : JSON.stringify(verdict);
-            if (user.includes('[[fenced-judge]]')) content = '```json\n' + JSON.stringify(verdict, null, 2) + '\n```';
+            if (user.includes('[[fenced-judge]]')) content = '판정 결과는 다음과 같습니다.\n```json\n' + JSON.stringify(verdict, null, 2) + '\n```\n감사합니다.';
+            if (user.includes('[[flaky-judge]]')) {
+                const key = createHash('sha256').update(user.split('JSON 형식:')[0]).digest('hex');
+                const attempt = (judgeAttempts.get(key) || 0) + 1;
+                judgeAttempts.set(key, attempt);
+                content = attempt === 1 ? 'A가 근소하게 앞섰다고 봅니다.' : JSON.stringify(verdict);
+            }
         } else {
             const side = /토론자 B입니다/.test(system) ? 'b' : 'a';
             const [, round, turns] = user.match(/(\d)\/(\d) 라운드/) || [null, '1', '2'];

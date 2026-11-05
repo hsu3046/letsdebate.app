@@ -1,10 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import { loadTS } from './helpers.mjs';
 
 // Run isolated TypeScript domain and route tests using the project's existing compiler.
 const { createBracket, advanceWinner, tournamentMarkdown } = loadTS('src/lib/tournament.ts');
-const { parseMatchEvent, verdictSchema } = loadTS('src/lib/tournamentProtocol.ts');
+const { parseMatchEvent, parseVerdict, verdictSchema } = loadTS('src/lib/tournamentProtocol.ts');
 const models = Array.from({ length: 8 }, (_, index) => ({ id: `test/model-${index}`, name: `Test: Model ${index}`, contextLength: 32000, promptPrice: 0, completionPrice: 0 }));
 const verdict = { winner: 'a', scores: { a: 84, b: 76 }, reason: '구체적인 반박이 더 설득력 있었습니다.', highlights: { a: '근거가 구체적입니다.', b: '핵심 전제의 보완이 필요합니다.' } };
 const makeTournament = size => ({ id: 'test-tournament', topic: 'AI가 만든 작품도 예술일까?', context: '', entrants: models.slice(0, size), judge: models[7], turnsPerSide: 2, matches: createBracket(models.slice(0, size)), createdAt: 0 });
@@ -173,7 +174,7 @@ test('기존 캐릭터 엔진도 서버 OpenRouter 키로만 연결한다', () =
   const providers = createProviders({ OPENROUTER_API_KEY: 'ignored-client-key' });
   providers.anthropic(MODELS.CLAUDE);
   providers.google(MODELS.GEMINI);
-  assert.deepEqual(calls, ['anthropic/claude-haiku-4.5', 'google/gemini-3-flash-preview']);
+  assert.deepEqual(calls, ['anthropic/claude-haiku-4.5', 'google/gemini-3.8-flash']);
 });
 
 test('카탈로그에 운영자가 제공하도록 지정한 모델만 표시한다', async () => {
@@ -201,4 +202,25 @@ test('기존 토론 API도 브라우저 키로 서버 연결을 우회할 수 �
     assert.ok(!body.includes('client-fixture'));
     assert.match(body, /AI 경기를 준비/);
   }
+});
+
+test('심판이 설명·코드 블록·문자열 점수를 섞어도 판정만 정확히 읽는다', () => {
+  const raw = { winner: 'B', scores: { a: '71', b: 84.4 }, reason: ' 반박이 구체적이었습니다. ', highlights: { a: '근거 부족', b: '날카로운 반박' } };
+  for (const text of [JSON.stringify(raw), `판정 결과입니다.\n\`\`\`json\n${JSON.stringify(raw, null, 2)}\n\`\`\`\n참고하세요.`, `결과: ${JSON.stringify(raw)} 끝.`]) {
+    const parsed = parseVerdict(text);
+    assert.equal(parsed.winner, 'b');
+    assert.deepEqual(parsed.scores, { a: 71, b: 84 });
+    assert.equal(parsed.reason, '반박이 구체적이었습니다.');
+  }
+  // Never guess: missing fields, contradictory scores or no JSON are rejected.
+  assert.throws(() => parseVerdict('A가 이겼습니다.'));
+  assert.throws(() => parseVerdict(JSON.stringify({ ...raw, reason: '' })));
+  assert.throws(() => parseVerdict(JSON.stringify({ ...raw, winner: 'a' })));
+  assert.throws(() => parseVerdict(JSON.stringify({ ...raw, winner: 'c' })));
+});
+
+test('기존 캐릭터 엔진의 모델은 권장 제공 모델 목록 안에 있다', () => {
+  const { MODELS } = loadTS('src/lib/ai/config.ts', { './access/context': { executionContext: { getStore: () => null } } });
+  const allowed = fs.readFileSync('.env.example', 'utf8').match(/^OPENROUTER_ALLOWED_MODELS=(.*)$/m)[1].split(',');
+  for (const id of Object.values(MODELS)) assert.ok(allowed.includes(id), `${id} must be in the recommended allowlist`);
 });

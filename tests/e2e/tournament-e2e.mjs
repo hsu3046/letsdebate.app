@@ -115,6 +115,7 @@ try {
         assert.deepEqual(item.roles, ['system', 'user'], 'standard system role, never the OpenAI-only developer role');
         assert.equal(item.max_tokens, 4096);
         assert.equal(item.max_completion_tokens, null);
+        assert.deepEqual(item.reasoning, { effort: 'low', exclude: true }, 'reasoning kept short for timely speeches');
         if (item.stream) assert.equal(item.include_usage, true, 'streamed calls request usage so cost can be recorded');
     }
     check('match 1: 4 speeches + verdict, ledger completed with usage/cost, speaking order alternates');
@@ -189,8 +190,26 @@ try {
         assert.equal(await page.locator('.verdict-panel').count(), 0);
         assert.equal(await page.locator('.bracket-player.winner').count(), 0);
     };
+    const judgesBefore = (await fake('/__fake/requests')).filter(item => item.judge).length;
     await scenario('[[bad-judge]] 주 4일제를 도입해야 할까?', '심판 응답을 확인할 수 없어');
-    check('unparseable judge output → no winner, clear error');
+    assert.equal((await fake('/__fake/requests')).filter(item => item.judge).length - judgesBefore, 2, 'exactly one judge retry');
+    check('unparseable judge output → retried once, then no winner, clear error');
+    const success = async topic => {
+        await page.goto(base + '/tournament/new');
+        await page.getByLabel('토론 주제', { exact: true }).fill(topic);
+        await page.locator('.model-option').first().waitFor();
+        for (const name of ['Qwen3.8 Flash', 'Kimi K2.6', 'GLM 5.3 Flash', 'MiniMax M3']) await page.locator('.model-option').filter({ hasText: name }).click();
+        await page.getByRole('button', { name: '심판 선택', exact: true }).click();
+        await page.getByRole('dialog').locator('.model-option').filter({ hasText: 'Solar Pro 4' }).click();
+        await page.getByRole('button', { name: '대진표 만들기', exact: true }).click();
+        await page.waitForURL('**/tournament?id=*');
+        await page.getByRole('button', { name: '이 경기 시작하기' }).click();
+        await page.locator('.verdict-panel').waitFor({ timeout: 30000 });
+    };
+    await success('[[fenced-judge]] 주 4일제를 도입해야 할까?');
+    check('judge JSON wrapped in prose + code fence → verdict accepted');
+    await success('[[flaky-judge]] 주 4일제를 도입해야 할까?');
+    check('judge malformed once → automatic retry produces a verdict');
     await scenario('[[fail-429]] 주 4일제를 도입해야 할까?', '요청 한도에 도달');
     check('upstream 429 → rate-limit message');
     await scenario('[[cut]] 주 4일제를 도입해야 할까?', '응답을 완료하지 못했');
