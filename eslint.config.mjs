@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Design mockups and stray local build output are not application source.
+    "assets/**",
+    "next/**",
+    "prototype_backup/**",
+    "test-results/**",
   ]),
 ]);
 

@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { isServiceModelEnabled } from '@/lib/ai/service';
+import { isServiceModelEnabled, openRouterBaseURL } from '@/lib/ai/service';
 
 const price = z.union([z.string().trim().min(1), z.number()]).transform(Number).pipe(z.number().finite().nonnegative());
 const modelSchema = z.object({
@@ -11,7 +11,7 @@ const modelSchema = z.object({
 
 export async function GET() {
     try {
-        const response = await fetch('https://openrouter.ai/api/v1/models', {
+        const response = await fetch(`${openRouterBaseURL()}/models`, {
             next: { revalidate: 3600 }, signal: AbortSignal.timeout(15000),
         });
         if (!response.ok) throw new Error('Catalog unavailable');

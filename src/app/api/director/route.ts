@@ -130,7 +130,7 @@ function parseDirectorResponse(
                 strategies[participant] = {
                     role: (assignment.role || 'neutral') as DirectorOutput['role'],
                     stance: assignment.stance || '',
-                    core_slogan: (assignment as any).core_slogan || '',
+                    core_slogan: (assignment as { core_slogan?: string }).core_slogan || '',
                     angle: assignment.angle || '',
                     secret_mission: assignment.secret_mission || '',
                     win_condition: assignment.win_condition || '',

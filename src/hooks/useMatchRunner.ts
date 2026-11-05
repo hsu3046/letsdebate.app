@@ -5,6 +5,14 @@ import { useTournamentStore } from '@/store/tournamentStore';
 import { parseMatchEvent } from '@/lib/tournamentProtocol';
 import type { MatchMessage, Tournament, TournamentMatch } from '@/lib/tournament';
 
+const PAGE_CLOSED = '페이지가 닫혀 경기가 중단됐어요. 다시 시작할 수 있어요.';
+const CONNECTION_LOST = '연결이 끊겨 경기가 중단됐어요. 완료된 발언은 보관돼요. 다시 시작할 수 있어요.';
+
+// Only messages written for people (server JSON errors and SSE error events) reach the UI.
+// Browser network failures surface as TypeError("network error"/"Failed to fetch") and
+// must never be shown verbatim.
+class MatchError extends Error {}
+
 export function useMatchRunner() {
     const activeRun = useRef<{ controller: AbortController; tournamentId: string; matchId: string; runId: string } | null>(null);
     const [liveMessage, setLiveMessage] = useState<MatchMessage | null>(null);
@@ -17,7 +25,19 @@ export function useMatchRunner() {
         activeRun.current = null;
         setLiveMessage(null); setJudging(false);
     };
+    // Reload/close aborts the request before React unmounts; record why first.
+    // Registered only while a match runs so idle pages stay eligible for the back/forward cache.
+    const onPageLeave = useRef(() => {
+        const run = activeRun.current;
+        if (!run) return;
+        activeRun.current = null;
+        run.controller.abort();
+        useTournamentStore.getState().interruptMatch(run.tournamentId, run.matchId, run.runId, PAGE_CLOSED);
+    });
     useEffect(() => () => {
+        const leave = onPageLeave.current;
+        window.removeEventListener('beforeunload', leave);
+        window.removeEventListener('pagehide', leave);
         const run = activeRun.current;
         if (run) {
             run.controller.abort();
@@ -31,6 +51,8 @@ export function useMatchRunner() {
         const runId = crypto.randomUUID();
         if (!useTournamentStore.getState().startMatch(tournament.id, match.id, runId)) return;
         activeRun.current = { controller, tournamentId: tournament.id, matchId: match.id, runId };
+        window.addEventListener('beforeunload', onPageLeave.current);
+        window.addEventListener('pagehide', onPageLeave.current);
         setJudging(false); setLiveMessage(null);
         let completed = false;
         let current: MatchMessage | null = null;
@@ -41,9 +63,9 @@ export function useMatchRunner() {
             });
             if (!response.ok) {
                 const error = await response.json().catch(() => ({}));
-                throw new Error(error.error || '경기를 시작하지 못했어요. 잠시 후 다시 시도해 주세요.');
+                throw new MatchError(typeof error.error === 'string' && error.error ? error.error : '경기를 시작하지 못했어요. 잠시 후 다시 시도해 주세요.');
             }
-            if (!response.body) throw new Error('경기에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.');
+            if (!response.body) throw new MatchError('경기에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.');
             const reader = response.body.getReader();
             const decoder = new TextDecoder();
             let buffer = '';
@@ -56,7 +78,7 @@ export function useMatchRunner() {
                         const event = parseMatchEvent(buffer.slice(0, boundary));
                         buffer = buffer.slice(boundary + 2);
                         if (!event || controller.signal.aborted) continue;
-                        if (event.type === 'error') throw new Error(event.message);
+                        if (event.type === 'error') throw new MatchError(event.message);
                         if (event.type === 'turn') { current = { ...event, content: '' }; setLiveMessage(current); }
                         if (event.type === 'delta' && current) { current = { ...current, content: current.content + event.text }; setLiveMessage(current); }
                         if (event.type === 'message') {
@@ -72,10 +94,12 @@ export function useMatchRunner() {
                     if (done) break;
                 }
             } finally { await reader.cancel().catch(() => {}); reader.releaseLock(); }
-            if (!completed && !controller.signal.aborted) throw new Error('판정이 끝나기 전에 연결이 끊겼어요. 완료된 발언은 보관돼요.');
+            if (!completed && !controller.signal.aborted) throw new MatchError('판정이 끝나기 전에 연결이 끊겼어요. 완료된 발언은 보관돼요.');
         } catch (error) {
-            if (!controller.signal.aborted) useTournamentStore.getState().interruptMatch(tournament.id, match.id, runId, error instanceof Error ? error.message : '경기에 연결하지 못했어요. 잠시 후 다시 시도해 주세요.');
+            if (!controller.signal.aborted) useTournamentStore.getState().interruptMatch(tournament.id, match.id, runId, error instanceof MatchError ? error.message : CONNECTION_LOST);
         } finally {
+            window.removeEventListener('beforeunload', onPageLeave.current);
+            window.removeEventListener('pagehide', onPageLeave.current);
             if (activeRun.current?.runId === runId) { activeRun.current = null; setJudging(false); setLiveMessage(null); }
         }
     };

@@ -156,3 +156,29 @@ test('Postgres 예약 함수가 계정별 한도와 동시 실행 및 재전송�
     await db.exec('reset role');
   } finally { await db.close(); }
 });
+
+test('실제 접속한 출처를 기준으로 같은 출처 요청을 판단한다', () => {
+  const { isSameOrigin, requestOrigin } = loadTS('src/lib/auth/policy.ts');
+  // `next start` reports its bind host in request.url even when the browser used 127.0.0.1.
+  const local = (origin, extra = {}) => new Request('http://localhost:3000/api/auth/login', { method: 'POST', headers: { origin, host: '127.0.0.1:3000', ...extra } });
+  assert.equal(requestOrigin(local('http://127.0.0.1:3000')), 'http://127.0.0.1:3000');
+  assert.equal(isSameOrigin(local('http://127.0.0.1:3000')), true);
+  assert.equal(isSameOrigin(local('http://evil.test')), false);
+  assert.equal(isSameOrigin(new Request('http://localhost:3000/api/x', { method: 'POST' })), false);
+  const proxied = local('https://letsdebate.app', { 'x-forwarded-host': 'letsdebate.app', 'x-forwarded-proto': 'https' });
+  assert.equal(requestOrigin(proxied), 'https://letsdebate.app');
+  assert.equal(isSameOrigin(proxied), true);
+  // Malformed forwarded values fall back to the URL instead of building an attacker-shaped origin.
+  assert.equal(requestOrigin(local('x', { 'x-forwarded-host': 'evil.test/path', 'x-forwarded-proto': 'https' })), 'http://localhost:3000');
+  assert.equal(requestOrigin(local('x', { 'x-forwarded-proto': 'javascript' })), 'http://localhost:3000');
+});
+
+test('OpenRouter 주소는 HTTPS 또는 로컬 테스트 주소만 허용한다', () => {
+  const load = value => loadTS('src/lib/ai/service.ts', { './access/context': { executionContext: { getStore: () => null } }, './access/trackedFetch': { createTrackedFetch: () => fetch } }, value === undefined ? {} : { OPENROUTER_BASE_URL: value });
+  assert.equal(load().openRouterBaseURL(), 'https://openrouter.ai/api/v1');
+  assert.equal(load('http://127.0.0.1:54329/api/v1/').openRouterBaseURL(), 'http://127.0.0.1:54329/api/v1');
+  assert.equal(load('https://gateway.example/api/v1').openRouterBaseURL(), 'https://gateway.example/api/v1');
+  assert.equal(load('http://gateway.example/api/v1').openRouterBaseURL(), 'https://openrouter.ai/api/v1');
+  assert.equal(load('not a url').openRouterBaseURL(), 'https://openrouter.ai/api/v1');
+  for (const value of Object.values(load().OPENROUTER_ATTRIBUTION_HEADERS)) assert.match(value, /^[\x20-\x7e]+$/);
+});

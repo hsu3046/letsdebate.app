@@ -151,3 +151,15 @@ GPT는 미로, Claude는 네오, Gemini는 차차로 변경한다. 15종의 고�
 
 ### Claude 캐릭터 변경 (2026-09-07)
 - 사용자 요청으로 Claude를 네오에서 후보 토리(07-tori)로 변경. 네오는 후보로 이동. 공유 매핑으로 홈·선수 카드·대결 아바타에 반영. 빌드와 캐릭터 매핑 검사 통과.
+
+## 2026-11-05 실제 실행 경로 검증과 수정
+
+외부 키 없이 실제 서버 코드를 끝까지 실행하는 전체 스택 검사(`npm run test:e2e`)를 추가했다. 이 과정에서 실제 키를 넣어도 AI 호출이 하나도 성공할 수 없던 원인을 찾아 고쳤다.
+
+- OpenRouter 귀속 헤더 `X-OpenRouter-Title: 왈가왈부`는 Latin-1이 아니어서 `fetch()`가 모든 요청을 보내기 전에 거부했다. 헤더는 ASCII(`WalGaWalBu`)로 둔다.
+- `@ai-sdk/openai` 대신 `@ai-sdk/openai-compatible`을 사용한다. 기존 클라이언트는 Gemini·Claude 등 모든 모델에 `developer` 역할과 `max_completion_tokens`를 보내고 temperature를 버렸다.
+- `next start`의 `request.url`은 바인드 호스트(localhost)를 보고하므로 같은 출처 검사와 OAuth 복귀 주소는 `X-Forwarded-Host`/`Host` 기준으로 판단한다. Next.js Server Actions의 출처 검사와 같은 방식이다.
+- 심판 형식 오류 한 번으로 완료된 발언 4개와 이용 횟수 1회를 버리지 않도록 심판만 1회 재호출한다. 발언 재시도·다른 모델 폴백 금지 결정은 유지한다.
+- 추론 모델의 긴 사고 과정이 발언 제한 시간(60초)과 출력 상한을 소진하지 않도록 OpenRouter `reasoning` 설정을 낮음·응답 제외로 보낸다.
+- 기존 캐릭터 엔진의 `deepseek/deepseek-r1`은 OpenRouter 카탈로그에서 사라졌고 기존 모델은 모두 권장 허용 목록 밖이었다. 대표 선수 목록 안의 모델로 옮긴다.
+- 로그인 또는 AI 실행이 준비되지 않은 환경에서는 대진표에서 로그인으로 보내지 않고 ‘AI 경기 준비 중’을 표시한다. 모의 경기를 생성하지 않는다는 결정은 유지한다.

@@ -13,6 +13,7 @@
 | `SUPABASE_SECRET_KEY` | 서버 전용 secret key 또는 legacy service_role key |
 | `OPENROUTER_API_KEY` | 서버 전용 AI 실행 키 |
 | `OPENROUTER_ALLOWED_MODELS` | 참가자·심판으로 허용할 모델 ID를 쉼표로 구분 |
+| `OPENROUTER_BASE_URL` | 선택. 기본 `https://openrouter.ai/api/v1`. 테스트용 호환 서버를 쓸 때만 지정하며 HTTPS 또는 루프백 HTTP만 허용 |
 | `AI_EXECUTION_ENABLED` | 기본 `false`, 설정 및 검증 완료 후 `true` |
 | `AI_DAILY_MATCH_LIMIT` | 계정당 일일 경기 시작 횟수, 기본 3 |
 | `AI_DAILY_ASSIST_LIMIT` | 기존 캐릭터 토론 보조 API의 일일 요청 횟수, 기본 30 |
@@ -65,6 +66,12 @@ npm run test:ui
 npm run test:auth-ui
 ```
 
+전체 스택 검사는 외부 계정 없이 실행한다. 프로덕션 빌드를 만들고 `next start`(127.0.0.1:3100)를 OpenRouter·Supabase 호환 로컬 서버(127.0.0.1:54329)에 연결한다. 브라우저 안에서는 아무 요청도 모의하지 않으므로 PKCE 로그인 쿠키, 실행 원장(실제 migration을 적용한 PGlite), SSE, 심판, 진출이 실제 코드로 실행된다. 스크린샷은 `test-results/e2e`에 저장된다. 이미 빌드했다면 `E2E_SKIP_BUILD=1`을 붙인다.
+
+```sh
+npm run test:e2e
+```
+
 첫 테스트는 대진 생성·경기·중단·재시작·진출·기록을 확인한다. 두 번째는 로그인 미설정, 모의 OAuth 복귀, 계정 내역, 로그아웃, 세션 오류 복구와 320–1440px 화면을 확인한다. 브라우저 테스트는 인증과 모델 응답을 대체하므로 실제 OAuth 연결 성공을 보장하지 않는다.
 
 ## 공개 활성화 전에 남은 항목
@@ -73,6 +80,6 @@ npm run test:auth-ui
 
 ## 대표 선수 15명 설정
 
-`.env.example`의 `OPENROUTER_ALLOWED_MODELS`에는 2026-09-07 선정한 대표 선수 15개의 정확한 ID가 들어 있다. 운영 환경에는 필요한 목록을 복사하되 비밀 키·Supabase·실행 플래그 설정은 기존 절차를 따른다. 이 작업은 실제 `.env.local`이나 배포 환경변수를 변경하지 않았다. 운영자가 일부 모델을 제외하거나 OpenRouter가 제공을 중단하면 카드의 자료는 남기고 해당 모델의 출전 선택을 막는다.
+`.env.example`의 `OPENROUTER_ALLOWED_MODELS`에는 2026-09-07 선정한 대표 선수 15개의 정확한 ID가 들어 있다. 2026-11-05 운영 배포의 `/api/models` 응답 기준으로 `arcee-ai/trinity-large-thinking`은 OpenRouter 카탈로그에서 빠져 있어 선택할 수 없다(카드는 남고 출전만 막힌다). 기존 캐릭터 토론의 모델(`src/lib/ai/config.ts`)도 이 목록 안의 ID를 사용하므로 같은 목록으로 두 엔진이 모두 열린다. 운영 환경에는 필요한 목록을 복사하되 비밀 키·Supabase·실행 플래그 설정은 기존 절차를 따른다. 이 작업은 실제 `.env.local`이나 배포 환경변수를 변경하지 않았다. 운영자가 일부 모델을 제외하거나 OpenRouter가 제공을 중단하면 카드의 자료는 남기고 해당 모델의 출전 선택을 막는다.
 
 스카우팅 수치는 `src/lib/players.ts`의 날짜가 있는 참고 자료다. 갱신할 때 OpenRouter 카탈로그 가격·AA Intelligence Index와 모델별 제공 경로의 1주 P50 속도를 다시 확인한다. 미공개 지능은 null을 유지한다. 현재 프로모션 가격이 포함되어 있으므로 지속적인 운영 단가로 가정하지 않는다. 검증은 `npm test` 및 실행 중인 로컬 앱에 대해 `npm run test:players-ui`로 수행한다. 브라우저 테스트는 기존 Playwright 런타임을 사용하며 필요한 경우 기존 테스트와 같은 NODE_PATH를 설정한다.

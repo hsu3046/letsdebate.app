@@ -85,6 +85,10 @@ try {
   await page.getByRole('button', { name: '대진표 만들기', exact: true }).click();
   await page.waitForURL('**/tournament?id=*');
   assert.equal(await page.locator('.bracket-match').count(), 3);
+  // Without login/AI configuration the bracket says so up front instead of sending people to a dead-end login.
+  await page.getByRole('button', { name: 'AI 경기 준비 중' }).waitFor();
+  assert.equal(await page.getByRole('button', { name: 'AI 경기 준비 중' }).isDisabled(), true);
+  assert.equal(await page.getByRole('button', { name: '로그인하고 경기 시작' }).count(), 0);
   await visit('/characters');
   await page.waitForFunction(() => document.querySelectorAll('.scouting-actions button:enabled').length === 15);
   for (let index = 0; index < 8; index++) await select(index);
@@ -110,5 +114,5 @@ try {
   await page.getByRole('button', { name: '선수 목록 다시 확인' }).click();
   await page.waitForFunction(() => document.querySelectorAll('.scouting-actions button:enabled').length === 15);
   assert.deepEqual(errors, []);
-  console.log('PASS: 15 cards, metrics, responsive widths, country/search, 4/8 draft carryover, judge, bracket, unavailable catalog, error/retry');
+  console.log('PASS: 15 cards, metrics, responsive widths, country/search, 4/8 draft carryover, judge, bracket, AI-unavailable notice, unavailable catalog, error/retry');
 } finally { await browser.close(); }
