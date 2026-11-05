@@ -162,10 +162,10 @@ export function useDebateInitialization({
                         }
                     }
                     console.warn('[Director] API failed, using fallback');
-                    useFallbackAssignment(topic);
+                    applyFallbackAssignment(topic);
                 } catch (e) {
                     console.error('[Director] Error:', e);
-                    useFallbackAssignment(topic);
+                    applyFallbackAssignment(topic);
                 }
             })();
 
@@ -181,7 +181,7 @@ export function useDebateInitialization({
 
             await Promise.all([directorPromise, imagePromise]);
 
-            function useFallbackAssignment(t: Topic) {
+            function applyFallbackAssignment(t: Topic) {
                 const aiIds = participants.filter(p => p.id !== 'human').map(p => p.id);
                 const assignments = assignTeams(aiIds, t.type, humanParticipation);
                 setTeamAssignments(assignments);
