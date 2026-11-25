@@ -34,13 +34,17 @@
 - `done`: 경기 정상 종료
 - `error`: 안전한 사용자용 message, 판정 없이 종료
 
-10초 간격 heartbeat를 전송하고 `Cache-Control: private, no-store, no-transform`, `X-Accel-Buffering: no`로 스트림 버퍼링과 캐시를 방지한다. 경기 전체 제한은 270초, 개별 모델 응답은 60초, 함수 maxDuration은 300초다. 각 호출의 출력 상한은 4096토큰, 자동 재시도는 0회다. 답변이 비거나 토큰 한도에 잘리면 완료된 발언으로 판정하지 않는다.
+10초 간격 heartbeat를 전송하고 `Cache-Control: private, no-store, no-transform`, `X-Accel-Buffering: no`로 스트림 버퍼링과 캐시를 방지한다. 경기 전체 제한은 270초, 개별 모델 응답은 60초, 함수 maxDuration은 300초다. 각 호출의 출력 상한은 4096토큰, SDK 자동 재시도는 0회다. 추론 모델이 시간·토큰을 소진하지 않도록 OpenRouter `reasoning` 설정을 낮음·응답 제외로 보낸다. 스트리밍 중 업스트림 오류(429·401·402 등)는 SDK가 `onError`로만 전달하므로 이를 보관해 분류한다. 서버 로그에는 오류 이름과 상태 코드만 남긴다. 답변이 비거나 토큰 한도에 잘리면 완료된 발언으로 판정하지 않는다.
 
-심판에게는 모델 ID 대신 A/B 발언만 보낸다. 출력 JSON을 Zod로 검증하고, 승자의 점수가 패자보다 낮으면 판정을 거부한다. 동점은 심판이 반박의 구체성으로 판단하도록 요청한다. 키·원본 업스트림 오류는 로그나 응답에 노출하지 않는다.
+심판에게는 모델 ID 대신 A/B 발언만 보낸다. 출력에서 설명 문장·코드 블록을 걷어 내고 첫 JSON 객체를 Zod로 검증한다(`parseVerdict`). 문자열 점수와 대문자 A/B는 정규화하고 소수 점수는 반올림한다. 빠진 필드·빈 이유·승자보다 높은 패자 점수는 거부한다. 형식이 잘못되면 같은 기록으로 심판을 한 번 더 호출하고, 두 번째도 실패하면 승자 없이 `error`로 끝낸다. 동점은 심판이 반박의 구체성으로 판단하도록 요청한다. 키·원본 업스트림 오류는 로그나 응답에 노출하지 않는다.
+
+## GET /api/auth/session
+
+`{ configured, ai, user }`를 반환한다. `configured`는 로그인 설정 여부, `ai`는 지금 경기를 실행할 수 있는지(실행 플래그·OpenRouter 키·허용 목록·서버 원장 키)를 나타내는 boolean이며 설정 값은 노출하지 않는다. 대진표 화면은 `ai`가 false면 로그인으로 보내지 않고 ‘AI 경기 준비 중’을 표시한다. `user`는 검증된 계정의 ID와 표시 이름만 포함한다.
 
 ## 검증 범위
 
-공개 카탈로그는 실응답 확인. 경기 실행은 모의 provider 및 브라우저 SSE fixture로 정상·오류·중단·진출을 검증했다. 운영용 OpenRouter 키가 아직 제공되지 않아 유료 모델의 실호출은 수행하지 않았다. 배포 환경에서 장시간 SSE 지원 및 maxDuration 적용 여부는 배포 전 확인해야 한다.
+공개 카탈로그는 실응답 확인. `npm run test:e2e`가 실제 프로덕션 빌드와 Route Handler를 OpenRouter·Supabase 호환 로컬 서버(`tests/e2e/fake-backend.mjs`, 실제 migration을 적용한 PGlite)에 연결해 로그인·스트리밍·판정·원장·중단·재전송·한도·업스트림 오류를 검증한다. 운영용 OpenRouter 키가 아직 제공되지 않아 유료 모델의 실호출은 수행하지 않았다. 배포 환경에서 장시간 SSE 지원 및 maxDuration 적용 여부는 배포 전 확인해야 한다.
 
 참고: [OpenRouter Quickstart](https://openrouter.ai/docs/quickstart), [모델 카탈로그](https://openrouter.ai/models).
 

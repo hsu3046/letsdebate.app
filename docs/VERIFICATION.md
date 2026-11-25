@@ -117,3 +117,12 @@
 - 로컬 프로덕션 서버 3001에서 전체 토너먼트 UI smoke와 인증 UI 검사 모두 통과. 이전에 기록된 hydration #418은 이번 실행에서 재현되지 않았으며 원인 수정으로 간주하지 않는다.
 - 선수 UI 검사는 색상 재배치 시 통과했고, 최종 Claude–토리 교체 후에는 빌드와 15명 고유 캐릭터 매핑 검사를 통과했다.
 - 외부 운영 설정과 원격 DB migration, 실제 Google 로그인, 실제 유료 AI 호출은 수행하지 않았다.
+
+## 2026-11-05 실제 실행 경로 전체 스택 검증
+
+- 신규 `npm run test:e2e` **20개 항목 통과**. 프로덕션 빌드 + `next start`(127.0.0.1)를 OpenRouter·Supabase 호환 로컬 서버에 연결하고 브라우저 안에서는 아무것도 모의하지 않았다. 카탈로그 허용 목록, 익명 대진 생성, PKCE Google 로그인과 같은 호스트 복귀, 실시간 발언, 4발언+판정, 원장 사용량·비용(5회 호출, $0.0021), 선발언 교대, 표준 Chat 파라미터(system 역할·max_tokens·include_usage·reasoning), 중단→원장 failed, 재시작, 진행 중 새로고침→발언 보존, 결승→챔피언, 같은 실행 키 재전송, 계정 잔여 횟수, 심판 형식 오류(1회 재호출 후 오류)·설명+코드 블록 판정·1회 재호출로 회복, 업스트림 429, 스트림 중단, 일일 한도, 다른 출처 요청 거부, 로그아웃.
+- 이 검사로 찾은 실제 결함: 한글 OpenRouter 헤더로 모든 AI 호출이 요청 전 실패, `@ai-sdk/openai`의 developer 역할·temperature 누락, 스트리밍 오류 분류 불가, `next start`에서 127.0.0.1 접속 시 로그인·AI 요청 403과 OAuth 복귀 호스트 불일치, 새로고침 시 영문 "network error" 노출, 빈 대진 슬롯의 승자 강조, 기존 캐릭터 엔진의 카탈로그에서 빠진 모델과 허용 목록 밖 모델. 모두 수정했다.
+- 기존 캐릭터 토론(`/setup → /participants → /arena`)을 같은 스택에서 브라우저로 실행해 10개 발언 생성과 역할별 temperature 전달을 확인했다(자동 테스트로 추가하지 않음).
+- 단위·API·SQL 테스트 **34개 통과**, TypeScript·프로덕션 빌드 통과. 기존 `test:ui`·`test:auth-ui`·`test:players-ui` 모두 통과.
+- 사용하지 않는 컴포넌트 4개와 의존성 16개(three, gsap, lenis, html2pdf.js, jspdf, recharts 등)를 제거하고 `npm audit fix`(semver 범위 안)를 적용했다. audit 32건(critical 3) → 14건(critical 0, high 2는 개발 도구). next 16.0.10 → 16.4.5.
+- 운영 Vercel 프로젝트는 읽기만 했다. 2026-11-05 Production 환경변수에는 `BAREUN_API_KEY`만 있고 `/api/auth/session`은 `configured:false`다. 따라서 운영에서는 로그인과 AI 경기가 꺼져 있다. 운영 설정·DB·배포는 변경하지 않았고 실제 유료 AI 호출과 실제 Google 로그인은 수행하지 않았다.

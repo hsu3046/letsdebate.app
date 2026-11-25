@@ -11,17 +11,20 @@ export function createProviders() {
     return { openai: model, anthropic: model, google: model, xai: model, deepseek: model };
 }
 
+// Legacy character roles use models from the recommended OPENROUTER_ALLOWED_MODELS list
+// (.env.example), so the documented configuration enables both engines. Every ID here was
+// present in OpenRouter's live catalog on 2026-11-05 (deepseek/deepseek-r1 had been delisted).
 export const MODELS = {
-    CHATGPT: 'openai/gpt-4.1-mini',
+    CHATGPT: 'openai/gpt-5.6-luna',
     CLAUDE: 'anthropic/claude-haiku-4.5',
-    GEMINI: 'google/gemini-3-flash-preview',
-    GROK: 'x-ai/grok-4.3',
-    DEEPSEEK: 'deepseek/deepseek-r1',
-    DIRECTOR: 'google/gemini-3-flash-preview',
-    COACH: 'google/gemini-3-flash-preview',
-    JUDGE: 'google/gemini-3-flash-preview',
-    FALLBACK_1: 'google/gemini-2.5-flash',
-    FALLBACK_2: 'google/gemini-2.5-flash-lite',
+    GEMINI: 'google/gemini-3.8-flash',
+    GROK: 'x-ai/grok-4.6',
+    DEEPSEEK: 'deepseek/deepseek-v4-pro-0813',
+    DIRECTOR: 'google/gemini-3.8-flash',
+    COACH: 'google/gemini-3.8-flash',
+    JUDGE: 'google/gemini-3.8-flash',
+    FALLBACK_1: 'qwen/qwen3.8-flash',
+    FALLBACK_2: 'z-ai/glm-5.3-flash',
 } as const;
 
 export const FINAL_FALLBACK_MODEL = MODELS.FALLBACK_2;

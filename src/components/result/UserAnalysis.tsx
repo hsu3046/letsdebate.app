@@ -101,7 +101,7 @@ export default function UserAnalysis({
                     className="bg-gradient-to-br from-accent/5 to-purple-50 rounded-xl p-4 border border-accent/20"
                 >
                     <p className="text-sm text-text-primary leading-relaxed">
-                        "{aiFeedback}"
+                        &ldquo;{aiFeedback}&rdquo;
                     </p>
                 </motion.div>
             </section>

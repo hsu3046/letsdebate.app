@@ -131,7 +131,7 @@ export default function ModeratorSummary({
             {/* 토론 주제 - 핵심 쟁점 바로 위에 표시 */}
             {topic && (
                 <h3 className="text-lg font-bold text-text-primary pt-2">
-                    "{topic}"
+                    &ldquo;{topic}&rdquo;
                 </h3>
             )}
 

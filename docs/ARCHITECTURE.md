@@ -32,7 +32,7 @@
 
 한 경기만 사용자 클릭으로 실행한다. 다음 경기는 자동으로 시작하지 않는다. 퀵 매치는 모델마다 2회, 깊은 토론은 3회 발언하며, 별도 심판 호출이 1회 발생한다. 매 라운드 선발언 순서를 바꾼다. A가 먼저 입장을 정하고 B가 반대 관점을 맡으므로 이는 특정 주제·역할·심판 조건의 결과이지 공인 모델 벤치마크가 아니다.
 
-기존 `@ai-sdk/openai`의 Chat Completions 호환 클라이언트에 OpenRouter base URL을 지정한다. 토너먼트는 선택 모델의 오류에 다른 모델로 폴백하지 않고 자동 재시도도 하지 않는다. 기존 캐릭터 엔진은 별도 동작을 유지한다.
+`@ai-sdk/openai-compatible`(`createOpenAICompatible`)로 OpenRouter Chat Completions를 호출한다. `@ai-sdk/openai`는 gpt-4 계열이 아닌 모든 모델 ID를 OpenAI 추론 모델로 간주해 시스템 프롬프트를 `developer` 역할로 보내고 `max_tokens`를 바꾸며 temperature를 버리므로 사용하지 않는다. OpenRouter 귀속 헤더는 ASCII만 사용한다(한글 헤더 값은 `fetch()`가 요청 전에 TypeError로 거부한다). 토너먼트 발언과 심판 호출에는 `reasoning: { effort: 'low', exclude: true }`를 보낸다. 토너먼트는 선택 모델의 오류에 다른 모델로 폴백하지 않고 발언 재시도도 하지 않는다. 심판 응답 형식이 잘못된 경우에만 심판을 한 번 더 호출한다. 기존 캐릭터 엔진은 별도 동작을 유지한다.
 
 ## 인증과 서버 실행 원장
 

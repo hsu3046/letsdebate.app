@@ -87,7 +87,7 @@ async function handlePost(request: NextRequest) {
 
         let systemPrompt = buildPrompt({
             modelId,
-            lang: lang as any,
+            lang: lang as Parameters<typeof buildPrompt>[0]['lang'],
             mode,
             phase: type as PhaseType,
             directorData: directorStrategy,

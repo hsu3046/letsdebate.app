@@ -2,12 +2,12 @@
 
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 
-interface Session { configured: boolean; user: { id: string; name: string } | null }
+interface Session { configured: boolean; ai: boolean; user: { id: string; name: string } | null }
 interface AuthState extends Session { loading: boolean; error: string; refresh: () => Promise<void>; logout: () => Promise<void> }
 const AuthContext = createContext<AuthState | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-    const [session, setSession] = useState<Session>({ configured: false, user: null });
+    const [session, setSession] = useState<Session>({ configured: false, ai: false, user: null });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const sequence = useRef(0);
@@ -17,9 +17,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const response = await fetch('/api/auth/session', { cache: 'no-store', signal: AbortSignal.timeout(8000) });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || '로그인 상태를 확인하지 못했어요.');
-            if (current === sequence.current) { setSession(data); setError(''); }
+            if (current === sequence.current) { setSession({ configured: !!data.configured, ai: !!data.configured && data.ai !== false, user: data.user ?? null }); setError(''); }
         } catch (caught) {
-            if (current === sequence.current) { setSession({ configured: true, user: null }); setError(caught instanceof Error ? caught.message : '로그인 상태를 확인하지 못했어요.'); }
+            if (current === sequence.current) { setSession({ configured: true, ai: true, user: null }); setError(caught instanceof Error ? caught.message : '로그인 상태를 확인하지 못했어요.'); }
         } finally { if (current === sequence.current) setLoading(false); }
     }, []);
     const invalidate = useCallback(() => { sequence.current++; }, []);
