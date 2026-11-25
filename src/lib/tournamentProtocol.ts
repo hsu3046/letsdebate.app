@@ -22,11 +22,10 @@ export function parseVerdict(text: string) {
     const source = fenced ?? text;
     const start = source.indexOf('{'), end = source.lastIndexOf('}');
     if (start < 0 || end <= start) throw new SyntaxError('NO_JSON_OBJECT');
-    const loose = looseVerdictSchema.parse(JSON.parse(source.slice(start, end + 1)));
-    return verdictSchema.parse({
-        ...loose,
-        scores: { a: Math.round(loose.scores.a), b: Math.round(loose.scores.b) },
-    });
+    // Validate range and winner/score agreement on the judge's own numbers; rounding first
+    // could turn a contradictory 80.1–80.4 "A wins" into an accepted 80–80 tie, or 100.4 into 100.
+    const verdict = verdictSchema.parse(looseVerdictSchema.parse(JSON.parse(source.slice(start, end + 1))));
+    return { ...verdict, scores: { a: Math.round(verdict.scores.a), b: Math.round(verdict.scores.b) } };
 }
 
 export const matchEventSchema = z.discriminatedUnion('type', [
